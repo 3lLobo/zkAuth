@@ -7,7 +7,7 @@ const ToggleColorMode = () => {
 
   // Handle Hydration mismatch
   const [loaded, setLoaded] = useState(false)
-  useEffect(() => setLoaded(true))
+  useEffect(() => setLoaded(true), [])
 
   if (!loaded) return null
 
