@@ -1,4 +1,4 @@
 [build]
   base = "dapp"
   publish = ".next"
-  command = "next build"
+  command = "npx next build"
