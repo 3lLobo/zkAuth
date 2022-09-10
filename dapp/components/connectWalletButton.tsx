@@ -8,7 +8,7 @@ const ConnectWalletButton = () => {
   const { theme } = useTheme()
   const { activate } = useEthers()
   const [activateError, setActivateError] = useState("")
-  const { error } = useEthers()
+  // const { error } = useEthers()
   //   useEffect(() => {
   //     if (error) {
   //       setActivateError(error.message)
@@ -23,6 +23,10 @@ const ConnectWalletButton = () => {
   //       setHasMetamask(true)
   //     }
   //   })
+
+  // Handle Hydration mismatch
+  const [loaded, setLoaded] = useState(false)
+  useEffect(() => setLoaded(true), [])
 
   const [web3Modal, setWeb3Modal] = useState<Web3Modal | undefined>()
   useEffect(() => {
@@ -42,14 +46,14 @@ const ConnectWalletButton = () => {
         },
       },
     }
-
+    console.log(theme)
     const newWeb3Modal = new Web3Modal({
       providerOptions,
       cacheProvider: true,
       theme: theme,
     })
     setWeb3Modal(newWeb3Modal)
-  }, [])
+  }, [theme])
 
   // const connect = async () => {
   //   try {
@@ -77,6 +81,8 @@ const ConnectWalletButton = () => {
   //     connect()
   //   }
   // }, [connect, web3Modal])
+
+  if (!loaded) return null
 
   return (
     <button
