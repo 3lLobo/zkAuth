@@ -1,4 +1,4 @@
 [build]
   base = "dapp"
-  publish = ".next"
+  publish = "dapp/.next"
   command = "yarn build"
