@@ -46,7 +46,7 @@ const ConnectWalletButton = () => {
         },
       },
     }
-    console.log(theme)
+
     const newWeb3Modal = new Web3Modal({
       providerOptions,
       cacheProvider: true,
