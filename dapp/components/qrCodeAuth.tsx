@@ -1,5 +1,4 @@
 import { useQRCode } from "next-qrcode"
-var base32 = require("thirty-two")
 
 function makeURI(account: string, secret: string): string {
   const type = "totp"
@@ -7,16 +6,20 @@ function makeURI(account: string, secret: string): string {
   const algorithm = "SHA1"
   const period = "30"
   const digits = "6"
-  const secretEncoded = base32.encode(secret).toString().replace(/=/g, "")
 
-  const uri = `otpauth://${type}/${issuer}:${account}?secret=${secretEncoded}&issuer=${issuer}&algorithm=${algorithm}&digits=${digits}&period=${period}`
+  const uri = `otpauth://${type}/${issuer}:${account}?secret=${secret}&issuer=${issuer}&algorithm=${algorithm}&digits=${digits}&period=${period}`
 
   return uri
 }
 
-const QrCodeAuth = (props: any) => {
+interface QRProps {
+  account: string
+  secret: string
+}
+
+const QrCodeAuth = (props: QRProps) => {
   const { Canvas } = useQRCode()
-  const URI = makeURI("daniel.eth", "Holita")
+  const URI = makeURI(props.account, props.secret)
   console.log("URI:", URI)
 
   return (
