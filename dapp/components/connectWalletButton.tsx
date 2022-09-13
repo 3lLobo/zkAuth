@@ -28,7 +28,7 @@ const ConnectWalletButton = () => {
   const [loaded, setLoaded] = useState(false)
   useEffect(() => setLoaded(true), [])
 
-  const [web3Modal, setWeb3Modal] = useState<Web3Modal | undefined>()
+  const [web3Modal, setWeb3Modal] = useState<Web3Modal | undefined>(undefined)
   useEffect(() => {
     const providerOptions = {
       injected: {
@@ -49,11 +49,10 @@ const ConnectWalletButton = () => {
 
     const newWeb3Modal = new Web3Modal({
       providerOptions,
-      cacheProvider: true,
-      theme: theme,
+      cacheProvider: false,
     })
     setWeb3Modal(newWeb3Modal)
-  }, [theme])
+  }, [])
 
   // const connect = async () => {
   //   try {
