@@ -1,38 +1,38 @@
-import { useEthers, shortenAddress, useLookupAddress } from "@usedapp/core"
-import { ethers } from "ethers"
-import { useState, useRef, useEffect } from "react"
-import { usePinInput, PinInputActions } from "react-pin-input-hook"
-import ConnectWalletButton from "./connectWalletButton"
-import ModalVerify from "./modalVerify"
-import QrCodeAuth from "./qrCodeAuth"
+import { useEthers, shortenAddress, useLookupAddress } from '@usedapp/core'
+import { ethers } from 'ethers'
+import { useState, useRef, useEffect } from 'react'
+import { usePinInput, PinInputActions } from 'react-pin-input-hook'
+import ConnectWalletButton from './connectWalletButton'
+import ModalVerify from './modalVerify'
+import QrCodeAuth from './qrCodeAuth'
 
-var jsotp = require("jsotp")
-var base32 = require("thirty-two")
+var jsotp = require('jsotp')
+var base32 = require('thirty-two')
 
 const LogInBox = () => {
   const { account, library: provider } = useEthers()
   const { ens } = useLookupAddress(account)
 
   // Secret State Management
-  const [secret, setSecret] = useState("")
-  const [blur, setBlur] = useState("opacity-50 blur-sm")
+  const [secret, setSecret] = useState('')
+  const [blur, setBlur] = useState('opacity-50 blur-sm')
   const loadSecret = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault()
     if (provider != undefined) {
       const signer = provider.getSigner()
-      const signature = await signer.signMessage("zkAuth") // TODO: Random Input? ZK?
+      const signature = await signer.signMessage('zkAuth') // TODO: Random Input? ZK?
       const secretEncoded = base32
         .encode(signature)
         .toString()
-        .replace(/=/g, "")
+        .replace(/=/g, '')
       setSecret(secretEncoded)
-      setBlur("")
+      setBlur('')
     }
   }
 
   // PIN state management
   const [verified, setVerified] = useState(false)
-  const [pin, setPin] = useState(["", "", "", "", "", ""])
+  const [pin, setPin] = useState(['', '', '', '', '', ''])
   const [error, setError] = useState(false)
   const actionRef = useRef<PinInputActions>(null)
   const { fields } = usePinInput({
@@ -40,20 +40,20 @@ const LogInBox = () => {
     onChange: setPin,
     error,
     actionRef,
-    placeholder: "•",
+    placeholder: '•',
   })
 
   function verifyCode(e: React.FormEvent<HTMLButtonElement>) {
     e.preventDefault()
     // Check if there is at least one empty field. If there is, the input is considered empty.
-    if (pin.includes("")) {
+    if (pin.includes('')) {
       // Setting the error.
       setError(true)
       // We set the focus on the first empty field if `error: true` was passed as a parameter in `options`.
       actionRef.current?.focus()
     }
     const verifier = jsotp.TOTP(secret)
-    if (verifier.verify(pin.join(""))) {
+    if (verifier.verify(pin.join(''))) {
       setVerified(true)
     } else {
       setVerified(false)
@@ -83,7 +83,7 @@ const LogInBox = () => {
               <div className={blur}>
                 <QrCodeAuth account={account} secret={secret} />
               </div>
-              {secret == "" ? (
+              {secret == '' ? (
                 <button
                   className="absolute w-1/2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                   onClick={(e) => loadSecret(e)}

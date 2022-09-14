@@ -1,4 +1,4 @@
-import ToggleColorMode from "./toggleColorMode"
+import ToggleColorMode from './toggleColorMode'
 
 const Navbar = () => {
   return (

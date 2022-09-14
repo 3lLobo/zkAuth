@@ -8,7 +8,7 @@ Further we provide a dapp to facilitate user-interaction with our smrt-contracts
 
 ## TOTP 2FA
 
-A pintoreque depiction of the TOTP 2FA solution:
+A picturesque flow-chart of our TOTP 2FA solution:
 ![TOTP 2FA](res/totpauth.png)
 
 ## zk 2FA
@@ -19,3 +19,5 @@ A pintoreque depiction of the TOTP 2FA solution:
 ## Contribute
 
 Feedback and contributions are always welcome 🤗
+
+![ethOnlineBanner](res/ethOnlineBanner.png)

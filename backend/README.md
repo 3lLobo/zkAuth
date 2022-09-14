@@ -1,6 +1,10 @@
-# Sample Hardhat Project
+# This is the bacqend, the smart-contract crib
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+![crib](https://user-images.githubusercontent.com/25290565/190274993-05c12f02-aa56-4041-af27-67ffda79bcf1.jpg)
+
+Till now, all we got issa first draft of the TOTP Authenticator.
+
+## Cyborg Run 🏃‍♂️
 
 Try running some of the following tasks:
 

@@ -1,0 +1,10 @@
+dist
+.vscode
+.next
+.swc
+
+
+node_modules
+public
+.next
+out
