@@ -22,6 +22,9 @@
   "dependencies": {
     "@typechain/ethers-v5": "^10.1.0",
     "solidity-coverage": "^0.8.2",
-    "typechain": "^8.1.0"
+    "typechain": "^8.1.0",
+    "hardhat": "^2.11.2",
+    "@openzeppelin/contracts": "^4.7.3",
+    "circomlib": "^2.0.5"
   }
 }
