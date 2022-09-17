@@ -1,7 +1,14 @@
 {
   "name": "hardhat-project",
+  "scripts": {
+    "prettier": "prettier --write . --config ../.prettierrc"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
-    "hardhat": "^2.11.1"
+    "@openzeppelin/contracts": "^4.7.3",
+    "hardhat": "^2.11.1",
+    "prettier": "^2.7.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.8.3"
   }
 }

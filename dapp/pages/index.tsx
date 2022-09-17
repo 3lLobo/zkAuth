@@ -1,17 +1,14 @@
-import type { NextPage } from "next"
-import Head from "next/head"
-import LogInBox from "../components/logInBox"
-import Navbar from "../components/navbar"
+import type { NextPage } from 'next'
+import Head from 'next/head'
+import LogInBox from '../components/logInBox'
+import Navbar from '../components/navbar'
 
 const Home: NextPage = () => {
   return (
     <div>
       <Head>
-        <title>zk-2FA</title>
-        <meta
-          name="description"
-          content="zero-knowledge two factor authentification"
-        />
+        <title>zkAuth</title>
+        <meta name="description" content="zero-knowledge Authentification" />
         <link rel="icon" href="" />
       </Head>
 

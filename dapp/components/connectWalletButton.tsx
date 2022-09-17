@@ -1,13 +1,13 @@
-import { useState, useEffect, useCallback } from "react"
-import { useEthers } from "@usedapp/core"
-import Web3Modal from "web3modal"
-import WalletConnectProvider from "@walletconnect/web3-provider"
-import { useTheme } from "next-themes"
+import { useState, useEffect, useCallback } from 'react'
+import { useEthers } from '@usedapp/core'
+import Web3Modal from 'web3modal'
+import WalletConnectProvider from '@walletconnect/web3-provider'
+import { useTheme } from 'next-themes'
 
 const ConnectWalletButton = () => {
   const { theme } = useTheme()
   const { activate } = useEthers()
-  const [activateError, setActivateError] = useState("")
+  const [activateError, setActivateError] = useState('')
   // const { error } = useEthers()
   //   useEffect(() => {
   //     if (error) {
@@ -28,32 +28,31 @@ const ConnectWalletButton = () => {
   const [loaded, setLoaded] = useState(false)
   useEffect(() => setLoaded(true), [])
 
-  const [web3Modal, setWeb3Modal] = useState<Web3Modal | undefined>()
+  const [web3Modal, setWeb3Modal] = useState<Web3Modal | undefined>(undefined)
   useEffect(() => {
     const providerOptions = {
       injected: {
         display: {
-          name: "Metamask",
-          description: "Connect with the provider in your Browser",
+          name: 'Metamask',
+          description: 'Connect with the provider in your Browser',
         },
         package: null,
       },
       walletconnect: {
         package: WalletConnectProvider,
         options: {
-          bridge: "https://bridge.walletconnect.org",
-          infuraId: "14a0951f47e646c1b241aa533e150219",
+          bridge: 'https://bridge.walletconnect.org',
+          infuraId: '14a0951f47e646c1b241aa533e150219',
         },
       },
     }
 
     const newWeb3Modal = new Web3Modal({
       providerOptions,
-      cacheProvider: true,
-      theme: theme,
+      cacheProvider: false,
     })
     setWeb3Modal(newWeb3Modal)
-  }, [theme])
+  }, [])
 
   // const connect = async () => {
   //   try {
@@ -69,7 +68,7 @@ const ConnectWalletButton = () => {
     try {
       const provider = await web3Modal?.connect()
       await activate(provider)
-      setActivateError("")
+      setActivateError('')
     } catch (error: any) {
       setActivateError(error.message)
     }
