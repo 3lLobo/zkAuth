@@ -1,17 +1,25 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./HashCheckVerifier.sol";
 import "hardhat/console.sol";
 
 contract ZkValidator is Ownable {
-    function verifyProof(
+
+    Verifier verifier;
+
+    constructor(){
+        verifier = new Verifier();
+    }
+
+    function verifyProofForUserWallet(
         uint256[2] memory passwordA,
         uint256[2][2] memory passwordB,
         uint256[2] memory passwordC,
         uint256[1] memory passwordInput
-    ) public returns (bool) {
+    ) public view returns (bool success) {
         require(
-            Verifier.verifyHashCheckProof(
+            verifier.verifyProof(
                 passwordA,
                 passwordB,
                 passwordC,
@@ -19,6 +27,7 @@ contract ZkValidator is Ownable {
             ),
             "Password proof invalid!"
         );
-    }
 
+        success = true;
+    }
 }
