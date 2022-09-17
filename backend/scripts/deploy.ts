@@ -15,8 +15,17 @@ async function main() {
   console.log(
     `Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
   )
+  testTotp()
 }
 
+async function testTotp() {
+  const Totp = await ethers.getContractFactory("TotpAuthenticator")
+  const totp = await Totp.deploy()
+
+  await totp.deployed()
+
+  console.log(`Totp successfully deployed to ${lock.address}`)
+}
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main().catch((error) => {
