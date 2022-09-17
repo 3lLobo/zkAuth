@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.17;
 
 // Uncomment this line to use console.log
-// import "hardhat/console.sol";
+// import 'hardhat/console.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 
 struct AuthData {
@@ -22,15 +22,13 @@ struct Authentication {
 
 contract TotpAuthenticator is Ownable {
   // Counter provides requestId and increments with each request
-  uint256 requestCounter;
+  uint256 public requestCounter;
   // Maps a requestId to the requestor/validator and to the auth requested address
-  mapping(uint256 => address[2]) requests;
+  mapping(uint256 => address[2]) public requests;
   // Maps a requestId to a address and its response.
-  mapping(uint256 => mapping(address => AuthData)) responses;
-  // // Maps a requestId to a list of address which have already responded (blocklist)
-  // mapping(uint256 => address[]) blocklists;
+  mapping(uint256 => mapping(address => AuthData)) public responses;
   // Maps requestId to completes authentication
-  mapping(uint256 => Authentication) completedAuth;
+  mapping(uint256 => Authentication) public completedAuth;
 
   // Events to index with theGraph in order to notify both parties
   event EventAuthRequest(address requestor, address target, uint256 requestId);
@@ -58,27 +56,30 @@ contract TotpAuthenticator is Ownable {
     bytes32 _totp6hash,
     uint256 _time
   ) public {
+    // require reqId lover than count
+    require(_requestId < requestCounter, 'ResuestId too high');
+    require(completedAuth[_requestId].time == 0, 'Request already authorized');
     require(
-      responses[_requestId][msg.sender].totp5 > 0,
+      responses[_requestId][msg.sender].totp5 == 0,
       'Response already submitted'
     );
-
     AuthData memory _authData = AuthData(_totp5, _totp6hash, _time);
     responses[_requestId][msg.sender] = _authData;
 
     emit EventAuthResponse(msg.sender, _requestId, _authData);
   }
 
-  // The Requestor can get the repsonse data. Preferably though the event indexer graph
-  function getResponses(uint256 _requestId, address _responder)
-    public
-    returns (AuthData memory)
-  {
-    // Assert that caller created the AuthRequest
-    require(isValidator(_requestId), 'U did not submit this request');
-    // Don't think it's allowed to return a mapping
-    return responses[_requestId][_responder];
-  }
+  // // The Requestor can get the repsonse data. Preferably though the event indexer graph
+  // function getResponses(uint256 _requestId, address _responder)
+  //   public
+  //   view
+  //   returns (AuthData memory)
+  // {
+  //   // Assert that caller created the AuthRequest
+  //   require(isValidator(_requestId), 'U did not submit this request');
+  //   // Don't think it's allowed to return a mapping
+  //   return responses[_requestId][_responder];
+  // }
 
   // @param _requestId the id of the request
   // @_responseAddress the address which submitted the valid response
@@ -89,10 +90,14 @@ contract TotpAuthenticator is Ownable {
   ) public {
     // Assert that caller created the AuthRequest
     require(isValidator(_requestId), 'Validation only by requestor');
+    require(
+      responses[_requestId][_responseAddress].time > 0,
+      'No auth response from this wallet'
+    );
 
     AuthData memory _authData = responses[_requestId][_responseAddress];
     bool _isValid = checkHash(_authData.totp5, _lastDigit, _authData.totp6hash);
-    require(_isValid, 'Onchain validation failed');
+    require(_isValid, 'On-chain validation failed');
 
     Authentication memory authentication = Authentication(
       _isValid,
@@ -121,11 +126,11 @@ contract TotpAuthenticator is Ownable {
   }
 
   // Check if the sender also submitted the request
-  function isValidator(uint256 _requestId) private returns (bool) {
+  function isValidator(uint256 _requestId) private view returns (bool) {
     return msg.sender == requests[_requestId][0];
   }
 
-  function toBytes(uint256 x) private returns (bytes memory b) {
+  function toBytes(uint256 x) private pure returns (bytes memory b) {
     b = new bytes(32);
     assembly {
       mstore(add(b, 32), x)
@@ -137,9 +142,22 @@ contract TotpAuthenticator is Ownable {
     uint256 _totp5,
     uint256 _lastDigit,
     bytes32 _totp6hash
-  ) private returns (bool) {
+  ) private pure returns (bool) {
     uint256 _totp6 = _totp5 * 10 + _lastDigit;
-    // Not sure if this returns a bool?
+
+    // console.log('number totp6');
+    // console.log(_totp6);
+    // bytes memory bytestotp6 = toBytes(_totp6);
+
+    // console.log('bytes of totp6');
+    // console.logBytes(bytestotp6);
+
+    // bytes32 shatotp6 = sha256(toBytes(_totp6));
+    // console.log('Sha shatotp6');
+    // console.logBytes32(shatotp6);
+    // console.log('original  _totp6hash');
+    // console.logBytes32(_totp6hash);
+
     return sha256(toBytes(_totp6)) == _totp6hash;
   }
 }

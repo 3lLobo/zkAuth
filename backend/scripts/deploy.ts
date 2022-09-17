@@ -24,7 +24,7 @@ async function testTotp() {
 
   await totp.deployed()
 
-  console.log(`Totp successfully deployed to ${lock.address}`)
+  console.log(`Totp successfully deployed to ${totp.address}`)
 }
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.

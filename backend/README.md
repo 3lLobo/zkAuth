@@ -15,3 +15,10 @@ GAS_REPORT=true npx hardhat test
 npx hardhat node
 npx hardhat run scripts/deploy.ts
 ```
+
+
+## hashing 
+
+convert number 123456 to bytes/hex with ethers. Padding left!!!
+Then sha256 it and insert `0x` at the start.
+That's it, now it should macht the sha on-chain
