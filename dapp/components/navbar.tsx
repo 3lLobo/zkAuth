@@ -1,6 +1,9 @@
-import ToggleColorMode from "./toggleColorMode"
+import { useEthers } from "@usedapp/core"
+import { DropdownAccount, ToggleColorMode } from "./"
 
 const Navbar = () => {
+  const { account } = useEthers()
+
   return (
     <nav
       className="
@@ -12,7 +15,11 @@ const Navbar = () => {
         <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
           zkAuth
         </span>
-        <ToggleColorMode />
+        <div className="flex flex-row space-x-4 align-middle">
+          {account ? <DropdownAccount account={account} /> : <></>}
+
+          <ToggleColorMode />
+        </div>
       </div>
     </nav>
   )
