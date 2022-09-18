@@ -6,12 +6,12 @@ import {
   CheckIcon,
 } from "@heroicons/react/24/outline"
 
-interface ModalVerifyProps {
+interface ModalVerifyTotpProps {
   verified: boolean
   verifyCode: any
 }
 
-const ModalVerify = (props: ModalVerifyProps) => {
+const ModalVerifyTotp = (props: ModalVerifyTotpProps) => {
   const [open, setOpen] = useState(false)
   const onSubmit = (e: React.UIEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -135,4 +135,4 @@ const ModalVerify = (props: ModalVerifyProps) => {
   )
 }
 
-export default ModalVerify
+export default ModalVerifyTotp
