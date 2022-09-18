@@ -42,6 +42,16 @@ Contract TotpAuthenticator deployed to Optimism Goerli:
 0x846528416731ddd42e37b8f2dc9fbac24aaf105ebe23d53707a680fc99d68ce0
 ```
 
+Also on Main Goerli bcs Opt Goerli goes not yet get indexed by theGraph:
+```bash
+0x5E9607EE52286732A5E3A0Fc57dF367bCb8adAa5
+# Tx hash
+0x561dd2171e2cfe793357143b22632db305434e9a1a3739c3d3fdd44275784356 
+```
+It's the same address, ain't that funney 🤔
+**Update** not the same anymore after debugging the contract and redeploying. Curious if the new contract would again give the same pub address on Optimism.
+
+
 Owner wallet:
 
 ```sh
