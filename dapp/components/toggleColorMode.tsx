@@ -16,6 +16,7 @@ const ToggleColorMode = () => {
       <button
         className="
             dark:bg-gray-800 bg-white
+            dark:hover:bg-gray-700 hover:bg-gray-100
             dark:border-gray-600 border-gray-300  
             rounded-full border p-2"
         onClick={() => setTheme(theme === "light" ? "dark" : "light")}
