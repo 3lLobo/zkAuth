@@ -28,6 +28,7 @@ contract TotpAuthenticator is Ownable {
   // Maps a requestId to a address and its response.
   mapping(uint256 => mapping(address => AuthData)) public responses;
   // Maps requestId to completes authentication
+  // TODO: make this private and create a function to get this value, which initially checks if the requested Id is below the current counter. Otherwise collisions can happen after reset.
   mapping(uint256 => Authentication) public completedAuth;
 
   // Events to index with theGraph in order to notify both parties
@@ -120,7 +121,8 @@ contract TotpAuthenticator is Ownable {
 
   // Reset the contract by deleting all data
   function resetAuthenticator() public onlyOwner {
-    // TODO: delete everything
+    requestCounter = 0;
+    // TODO: create zero AuthResponse and set the responses[_requestId] = zeroAuthResponse each time a request is initalized.
     // How do we empty the mappings?
     emit EventResetContract(block.timestamp);
   }
