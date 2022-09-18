@@ -9,7 +9,7 @@ const config = {
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ThemeProvider attribute="class">
+    <ThemeProvider attribute="class" enableSystem={false} defaultTheme="dark">
       <DAppProvider config={config}>
         <Component {...pageProps} />
       </DAppProvider>
