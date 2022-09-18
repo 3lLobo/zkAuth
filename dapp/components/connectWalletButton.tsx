@@ -3,6 +3,7 @@ import { useEthers } from "@usedapp/core"
 import Web3Modal from "web3modal"
 import WalletConnectProvider from "@walletconnect/web3-provider"
 import { useTheme } from "next-themes"
+import { ethers } from "ethers"
 
 const ConnectWalletButton = () => {
   const { theme } = useTheme()
@@ -28,6 +29,7 @@ const ConnectWalletButton = () => {
   const [loaded, setLoaded] = useState(false)
   useEffect(() => setLoaded(true), [])
 
+  // Set up Web3modal
   const [web3Modal, setWeb3Modal] = useState<Web3Modal | undefined>(undefined)
   useEffect(() => {
     const providerOptions = {
@@ -58,16 +60,6 @@ const ConnectWalletButton = () => {
     }
   }, [loaded, theme])
 
-  // const connect = async () => {
-  //   try {
-  //     const provider = await web3Modal?.connect()
-  //     await activate(provider)
-  //     setActivateError("")
-  //   } catch (error: any) {
-  //     setActivateError(error.message)
-  //   }
-  // }
-
   const connect = useCallback(async () => {
     try {
       const provider = await web3Modal?.connect()
@@ -78,12 +70,22 @@ const ConnectWalletButton = () => {
     }
   }, [web3Modal, activate])
 
-  // useEffect(() => {
-  //   if (web3Modal && web3Modal.cachedProvider) {
-  //     console.log(web3Modal.cachedProvider)
-  //     connect()
-  //   }
-  // }, [connect, web3Modal])
+  // Set up provider if already connected
+  useEffect(() => {
+    const { ethereum } = window
+    const checkMetaMaskConnected = async () => {
+      var provider = new ethers.providers.Web3Provider(ethereum)
+      const accounts = await provider.listAccounts()
+      const connected = accounts.length > 0
+      console.log("CONNECTED", connected)
+      if (connected) {
+        activate(provider)
+      }
+    }
+    if (ethereum) {
+      checkMetaMaskConnected()
+    }
+  })
 
   if (!loaded) return null
 
