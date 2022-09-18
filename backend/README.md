@@ -15,3 +15,20 @@ GAS_REPORT=true npx hardhat test
 npx hardhat node
 npx hardhat run scripts/deploy.ts
 ```
+
+
+## hashing 
+
+Changes:
+ - contract tested
+  - logic fixed
+  - Readme updated
+ 
+How to calculate and submit hash:
+
+convert TOTP (eg.`123456`) to bytes/hex with ethers. Padding left!!!
+Then sha256 it and insert `0x` at the start.
+That's it, now it should match the sha256 on-chain.
+
+[sha256](https://it-tools.tech/hash-text)
+[bytes32](https://web3-type-converter.onbrn.com/)
