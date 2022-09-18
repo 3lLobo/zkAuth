@@ -1,7 +1,7 @@
 {
   "name": "hardhat-project",
   "scripts": {
-    "prettier": "prettier --write . --config ../.prettierrc"
+    "prettier": "prettier --write ../ --config ../.prettierrc"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^1.0.3",

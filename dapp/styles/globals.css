@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-b from-white  to-gray-200 dark:from-gray-900 dark:via-black dark:to-black h-screen;
+  }
+  /* ... */
+}
+
+.filter-dark {
+  filter: invert(80%);
+}
+
+.filter-light {
+  filter: invert(20%);
+}

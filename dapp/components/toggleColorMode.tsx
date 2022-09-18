@@ -15,8 +15,9 @@ const ToggleColorMode = () => {
     <div className="flex flex-0 color-snow hover:scale-110 transition ease-in-out duration-500">
       <button
         className="
-            dark:bg-gray-600 bg-gray-300 
-            dark:border-gray-300 border-gray-600  
+            dark:bg-gray-800 bg-white
+            dark:hover:bg-gray-700 hover:bg-gray-100
+            dark:border-gray-600 border-gray-300  
             rounded-full border p-2"
         onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
       >
