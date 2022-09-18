@@ -47,12 +47,16 @@ const ConnectWalletButton = () => {
       },
     }
 
-    const newWeb3Modal = new Web3Modal({
-      providerOptions,
-      cacheProvider: false,
-    })
-    setWeb3Modal(newWeb3Modal)
-  }, [])
+    if (loaded) {
+      const newWeb3Modal = new Web3Modal({
+        providerOptions,
+        cacheProvider: false,
+        theme: theme,
+      })
+
+      setWeb3Modal(newWeb3Modal)
+    }
+  }, [loaded, theme])
 
   // const connect = async () => {
   //   try {
