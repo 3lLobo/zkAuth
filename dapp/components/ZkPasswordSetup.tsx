@@ -43,7 +43,6 @@ const ZkPasswordSetup = (props: ZkSetupProps) => {
         <h5 className="text-2xl font-medium flex justify-center text-gray-900 dark:text-white">
           Set up zk-Password
         </h5>
-        <div className="relative flex justify-center items-center"></div>
 
         <div>
           <label
