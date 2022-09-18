@@ -29,6 +29,10 @@
     "web3modal": "^1.9.9"
   },
   "devDependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.3",
+    "@tailwindcss/line-clamp": "^0.4.2",
+    "@tailwindcss/typography": "^0.5.7",
     "@types/node": "18.7.16",
     "@types/qrcode": "^1.5.0",
     "@types/react": "18.0.19",

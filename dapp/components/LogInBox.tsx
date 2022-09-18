@@ -2,7 +2,7 @@ import { useEthers } from '@usedapp/core'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 
-import { ConnectWalletButton, TotpSetup, ZkPasswordSetup, CardChoice } from './'
+import { ConnectWalletButton, TotpSetup, ZkPasswordSetup, CardChoice } from '.'
 
 const LogInBox = () => {
   const { account, library: provider } = useEthers()
