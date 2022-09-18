@@ -19,7 +19,7 @@ async function main() {
 }
 
 async function testTotp() {
-  const Totp = await ethers.getContractFactory("TotpAuthenticator")
+  const Totp = await ethers.getContractFactory('TotpAuthenticator')
   const totp = await Totp.deploy()
 
   await totp.deployed()
