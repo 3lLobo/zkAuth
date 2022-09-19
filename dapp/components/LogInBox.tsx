@@ -1,12 +1,12 @@
-import { useEthers } from "@usedapp/core"
-import { useState } from "react"
-import { motion } from "framer-motion"
+import { useEthers } from '@usedapp/core'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
 
-import { ConnectWalletButton, TotpSetup, ZkPasswordSetup, CardChoice } from "./"
+import { ConnectWalletButton, TotpSetup, ZkPasswordSetup, CardChoice } from './'
 
 const LogInBox = () => {
   const { account, library: provider } = useEthers()
-  const [authType, setAuthType] = useState("")
+  const [authType, setAuthType] = useState('')
 
   return (
     <>
@@ -17,7 +17,7 @@ const LogInBox = () => {
           initial={{ y: 10, opacity: 0, scale: 0.9 }}
           animate={{ y: 0, opacity: 1, scale: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
+          transition={{ duration: 1, ease: 'easeOut' }}
         >
           <ConnectWalletButton />
         </motion.div>
@@ -29,7 +29,7 @@ const LogInBox = () => {
               initial={{ y: 10, opacity: 0, scale: 0.9 }}
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
             >
               <TotpSetup setAuthType={setAuthType} />
             </motion.div>
@@ -40,7 +40,7 @@ const LogInBox = () => {
               initial={{ y: 10, opacity: 0, scale: 0.9 }}
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
             >
               <ZkPasswordSetup setAuthType={setAuthType} />
             </motion.div>
@@ -52,7 +52,7 @@ const LogInBox = () => {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: -100, opacity: 0, transition: { duration: 1 } }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
             >
               <CardChoice authType="totp" setAuthType={setAuthType} />
             </motion.div>
@@ -61,7 +61,7 @@ const LogInBox = () => {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ y: 0, opacity: 1, scale: 1 }}
               exit={{ y: -100, opacity: 0, transition: { duration: 1 } }}
-              transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
+              transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
             >
               <CardChoice authType="zk" setAuthType={setAuthType} />
             </motion.div>

@@ -1,8 +1,8 @@
-import { Fragment, useState } from "react"
-import { Dialog, Transition } from "@headlessui/react"
-import { XMarkIcon } from "@heroicons/react/24/outline"
-import { ethers } from "ethers"
-import { useResolveName } from "@usedapp/core"
+import { Fragment, useState } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import { XMarkIcon } from '@heroicons/react/24/outline'
+import { ethers } from 'ethers'
+import { useResolveName } from '@usedapp/core'
 
 interface ModalSetSocialProps {}
 
@@ -18,9 +18,9 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
     2: false,
   })
 
-  const validStyleInput = "focus:ring-blue-500 focus:border-blue-500"
+  const validStyleInput = 'focus:ring-blue-500 focus:border-blue-500'
   const invalidStyleInput =
-    "focus:ring-red-500 focus:border-red-500 focus:outline-red-500"
+    'focus:ring-red-500 focus:border-red-500 focus:outline-red-500'
 
   const verifyAccount = (account: string, key: string) => {
     const isValidAccount = ethers.utils.isAddress(account)
@@ -29,7 +29,7 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
     if (isValidAccount || isValidENS) {
       setVerifiedAccounts({ ...verifiedAccounts, [key]: true })
     }
-    console.log(verifiedAccounts["0"])
+    console.log(verifiedAccounts['0'])
   }
 
   return (
@@ -101,12 +101,12 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
                             type="text"
                             className={`w-full p-2.5 rounded-lg
                             bg-gray-50 border border-gray-300 text-gray-900    dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white ${
-                              verifiedAccounts["0"]
+                              verifiedAccounts['0']
                                 ? validStyleInput
                                 : invalidStyleInput
                             }`}
                             placeholder="0x000...0000 or vitalik.eth"
-                            onChange={(e) => verifyAccount(e.target.value, "0")}
+                            onChange={(e) => verifyAccount(e.target.value, '0')}
                           />
                         </div>
                         <div>
@@ -122,12 +122,12 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
                             type="text"
                             className={`w-full p-2.5 rounded-lg
                             bg-gray-50 border border-gray-300 text-gray-900    dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white ${
-                              verifiedAccounts["0"]
+                              verifiedAccounts['0']
                                 ? validStyleInput
                                 : invalidStyleInput
                             }`}
                             placeholder="0x000...0000 or vitalik.eth"
-                            onChange={(e) => verifyAccount(e.target.value, "1")}
+                            onChange={(e) => verifyAccount(e.target.value, '1')}
                           />
                         </div>
                         <div>
@@ -143,12 +143,12 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
                             type="text"
                             className={`w-full p-2.5 rounded-lg
                             bg-gray-50 border border-gray-300 text-gray-900    dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white ${
-                              verifiedAccounts["0"]
+                              verifiedAccounts['0']
                                 ? validStyleInput
                                 : invalidStyleInput
                             }`}
                             placeholder="0x000...0000 or vitalik.eth"
-                            onChange={(e) => verifyAccount(e.target.value, "2")}
+                            onChange={(e) => verifyAccount(e.target.value, '2')}
                           />
                         </div>
                       </form>

@@ -1,14 +1,14 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment } from "react"
-import { Menu, Transition } from "@headlessui/react"
+import { Fragment } from 'react'
+import { Menu, Transition } from '@headlessui/react'
 import {
   ArrowTopRightOnSquareIcon,
   ArrowRightOnRectangleIcon,
-} from "@heroicons/react/20/solid"
-import { shortenAddress, useEthers, useLookupAddress } from "@usedapp/core"
+} from '@heroicons/react/20/solid'
+import { shortenAddress, useEthers, useLookupAddress } from '@usedapp/core'
 
 function classNames(...classes: any) {
-  return classes.filter(Boolean).join(" ")
+  return classes.filter(Boolean).join(' ')
 }
 
 interface DropdownProps {
@@ -52,9 +52,9 @@ const DropdownAccount = (props: DropdownProps) => {
                   href="#"
                   className={classNames(
                     active
-                      ? "bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-100"
-                      : "text-gray-700 dark:text-gray-300",
-                    "group flex items-center px-4 py-2 text-sm"
+                      ? 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-100'
+                      : 'text-gray-700 dark:text-gray-300',
+                    'group flex items-center px-4 py-2 text-sm'
                   )}
                 >
                   <ArrowTopRightOnSquareIcon

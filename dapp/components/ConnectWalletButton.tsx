@@ -1,14 +1,14 @@
-import { useState, useEffect, useCallback } from "react"
-import { useEthers } from "@usedapp/core"
-import Web3Modal from "web3modal"
-import WalletConnectProvider from "@walletconnect/web3-provider"
-import { useTheme } from "next-themes"
-import { ethers } from "ethers"
+import { useState, useEffect, useCallback } from 'react'
+import { useEthers } from '@usedapp/core'
+import Web3Modal from 'web3modal'
+import WalletConnectProvider from '@walletconnect/web3-provider'
+import { useTheme } from 'next-themes'
+import { ethers } from 'ethers'
 
 const ConnectWalletButton = () => {
   const { theme } = useTheme()
   const { activate } = useEthers()
-  const [activateError, setActivateError] = useState("")
+  const [activateError, setActivateError] = useState('')
   // const { error } = useEthers()
   //   useEffect(() => {
   //     if (error) {
@@ -35,16 +35,16 @@ const ConnectWalletButton = () => {
     const providerOptions = {
       injected: {
         display: {
-          name: "Metamask",
-          description: "Connect with the provider in your Browser",
+          name: 'Metamask',
+          description: 'Connect with the provider in your Browser',
         },
         package: null,
       },
       walletconnect: {
         package: WalletConnectProvider,
         options: {
-          bridge: "https://bridge.walletconnect.org",
-          infuraId: "14a0951f47e646c1b241aa533e150219",
+          bridge: 'https://bridge.walletconnect.org',
+          infuraId: '14a0951f47e646c1b241aa533e150219',
         },
       },
     }
@@ -64,7 +64,7 @@ const ConnectWalletButton = () => {
     try {
       const provider = await web3Modal?.connect()
       await activate(provider)
-      setActivateError("")
+      setActivateError('')
     } catch (error: any) {
       setActivateError(error.message)
     }
@@ -77,7 +77,7 @@ const ConnectWalletButton = () => {
       var provider = new ethers.providers.Web3Provider(ethereum)
       const accounts = await provider.listAccounts()
       const connected = accounts.length > 0
-      console.log("CONNECTED", connected)
+      console.log('CONNECTED', connected)
       if (connected) {
         activate(provider)
       }

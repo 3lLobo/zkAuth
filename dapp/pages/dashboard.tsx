@@ -1,9 +1,9 @@
-import type { NextPage } from "next"
+import type { NextPage } from 'next'
 import {
   BoxAuthSystem,
   BoxSocialRecovery,
   BoxPendingTransaction,
-} from "../components"
+} from '../components'
 
 const Dashboard: NextPage = () => {
   return (

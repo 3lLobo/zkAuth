@@ -1,11 +1,11 @@
-import { ArrowUturnLeftIcon } from "@heroicons/react/24/outline"
-import { useEthers } from "@usedapp/core"
-import { useState, useRef, useEffect } from "react"
-import { usePinInput, PinInputActions } from "react-pin-input-hook"
-import { ModalVerifyTotp, QrCodeAuth } from "./"
+import { ArrowUturnLeftIcon } from '@heroicons/react/24/outline'
+import { useEthers } from '@usedapp/core'
+import { useState, useRef, useEffect } from 'react'
+import { usePinInput, PinInputActions } from 'react-pin-input-hook'
+import { ModalVerifyTotp, QrCodeAuth } from './'
 
-var jsotp = require("jsotp")
-var base32 = require("thirty-two")
+var jsotp = require('jsotp')
+var base32 = require('thirty-two')
 
 interface TotpSetupProps {
   setAuthType: (arg: string) => void
@@ -15,25 +15,25 @@ const TotpSetup = (props: TotpSetupProps) => {
   const { account, library: provider } = useEthers()
 
   // Secret State Management
-  const [secret, setSecret] = useState("")
-  const [blur, setBlur] = useState("opacity-50 blur-sm")
+  const [secret, setSecret] = useState('')
+  const [blur, setBlur] = useState('opacity-50 blur-sm')
   const loadSecret = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault()
     if (provider != undefined) {
       const signer = provider.getSigner()
-      const signature = await signer.signMessage("zkAuth") // TODO: Random Input? ZK?
+      const signature = await signer.signMessage('zkAuth') // TODO: Random Input? ZK?
       const secretEncoded = base32
         .encode(signature)
         .toString()
-        .replace(/=/g, "")
+        .replace(/=/g, '')
       setSecret(secretEncoded)
-      setBlur("")
+      setBlur('')
     }
   }
 
   // PIN state management
   const [verified, setVerified] = useState(false)
-  const [pin, setPin] = useState(["", "", "", "", "", ""])
+  const [pin, setPin] = useState(['', '', '', '', '', ''])
   const [error, setError] = useState(false)
   const actionRef = useRef<PinInputActions>(null)
   const { fields } = usePinInput({
@@ -41,20 +41,20 @@ const TotpSetup = (props: TotpSetupProps) => {
     onChange: setPin,
     error,
     actionRef,
-    placeholder: "•",
+    placeholder: '•',
   })
 
   function verifyCode(e: React.FormEvent<HTMLButtonElement>) {
     e.preventDefault()
     // Check if there is at least one empty field. If there is, the input is considered empty.
-    if (pin.includes("")) {
+    if (pin.includes('')) {
       // Setting the error.
       setError(true)
       // We set the focus on the first empty field if `error: true` was passed as a parameter in `options`.
       actionRef.current?.focus()
     }
     const verifier = jsotp.TOTP(secret)
-    if (verifier.verify(pin.join(""))) {
+    if (verifier.verify(pin.join(''))) {
       setVerified(true)
     } else {
       setVerified(false)
@@ -68,7 +68,7 @@ const TotpSetup = (props: TotpSetupProps) => {
         <button
           type="button"
           className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
-          onClick={() => props.setAuthType("")}
+          onClick={() => props.setAuthType('')}
         >
           <span className="sr-only">Back</span>
           <ArrowUturnLeftIcon className="h-5 w-5" aria-hidden="true" />
@@ -82,7 +82,7 @@ const TotpSetup = (props: TotpSetupProps) => {
           <div className={blur}>
             <QrCodeAuth account={account} secret={secret} />
           </div>
-          {secret == "" ? (
+          {secret == '' ? (
             <button
               className="absolute w-1/2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               onClick={(e) => loadSecret(e)}

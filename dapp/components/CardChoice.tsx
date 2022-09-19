@@ -1,5 +1,5 @@
-import { useTheme } from "next-themes"
-import Image from "next/image"
+import { useTheme } from 'next-themes'
+import Image from 'next/image'
 
 interface CardChoiceProps {
   authType: string
@@ -13,7 +13,7 @@ const CardChoice = (props: CardChoiceProps) => {
       totp: (
         <button
           className="w-full max-w-sm bg-white rounded-lg border border-gray-200 shadow-md p-6 lg:p-8 dark:bg-gray-800 dark:border-gray-700 hover:scale-110 transition ease-in-out duration-500 grid grid-cols-12 gap-4"
-          onClick={() => props.setAuthType("totp")}
+          onClick={() => props.setAuthType('totp')}
         >
           <div className="flex h-full col-span-3 lg:col-span-12 items-center justify-center">
             <Image
@@ -39,7 +39,7 @@ const CardChoice = (props: CardChoiceProps) => {
       zk: (
         <button
           className="w-full max-w-sm bg-white rounded-lg border border-gray-200 shadow-md p-6 lg:p-8 dark:bg-gray-800 dark:border-gray-700 hover:scale-110 transition ease-in-out duration-500 grid grid-cols-12 gap-4"
-          onClick={() => props.setAuthType("zk")}
+          onClick={() => props.setAuthType('zk')}
         >
           <div className="flex h-full col-span-3 lg:col-span-12 items-center justify-center">
             <Image

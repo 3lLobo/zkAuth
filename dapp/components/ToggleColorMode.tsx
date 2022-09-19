@@ -1,6 +1,6 @@
-import { SunIcon, MoonIcon } from "@heroicons/react/24/solid"
-import { useState, useEffect } from "react"
-import { useTheme } from "next-themes"
+import { SunIcon, MoonIcon } from '@heroicons/react/24/solid'
+import { useState, useEffect } from 'react'
+import { useTheme } from 'next-themes'
 
 const ToggleColorMode = () => {
   const { theme, setTheme } = useTheme()
@@ -19,9 +19,9 @@ const ToggleColorMode = () => {
             dark:hover:bg-gray-700 hover:bg-gray-100
             dark:border-gray-600 border-gray-300  
             rounded-full border p-2"
-        onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+        onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
       >
-        {theme === "light" ? (
+        {theme === 'light' ? (
           <MoonIcon className="h-4 w-4 text-snow fill-snow" />
         ) : (
           <SunIcon className="h-4 w-4 text-snow fill-snow" />

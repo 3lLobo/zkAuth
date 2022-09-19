@@ -1,5 +1,5 @@
-import type { NextPage } from "next"
-import { LogInBox } from "../components"
+import type { NextPage } from 'next'
+import { LogInBox } from '../components'
 
 const Home: NextPage = () => {
   return (

@@ -2,12 +2,12 @@ import {
   ArrowUturnLeftIcon,
   CheckIcon,
   XMarkIcon,
-} from "@heroicons/react/24/outline"
-import { useEthers } from "@usedapp/core"
-import { useState } from "react"
+} from '@heroicons/react/24/outline'
+import { useEthers } from '@usedapp/core'
+import { useState } from 'react'
 
-import dynamic from "next/dynamic"
-const PasswordChecklist = dynamic(import("react-password-checklist"), {
+import dynamic from 'next/dynamic'
+const PasswordChecklist = dynamic(import('react-password-checklist'), {
   ssr: false,
 })
 interface ZkSetupProps {
@@ -17,8 +17,8 @@ const ZkPasswordSetup = (props: ZkSetupProps) => {
   const { account, library: provider } = useEthers()
 
   // PIN state management
-  const [password, setPassword] = useState("")
-  const [passwordAgain, setPasswordAgain] = useState("")
+  const [password, setPassword] = useState('')
+  const [passwordAgain, setPasswordAgain] = useState('')
   const [isValid, setIsValid] = useState(false)
 
   // Set password to blockchain
@@ -33,7 +33,7 @@ const ZkPasswordSetup = (props: ZkSetupProps) => {
         <button
           type="button"
           className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
-          onClick={() => props.setAuthType("")}
+          onClick={() => props.setAuthType('')}
         >
           <span className="sr-only">Back</span>
           <ArrowUturnLeftIcon className="h-5 w-5" aria-hidden="true" />
@@ -80,7 +80,7 @@ const ZkPasswordSetup = (props: ZkSetupProps) => {
         </div>
         <div>
           <PasswordChecklist
-            rules={["minLength", "specialChar", "number", "capital", "match"]}
+            rules={['minLength', 'specialChar', 'number', 'capital', 'match']}
             minLength={8}
             value={password}
             valueAgain={passwordAgain}

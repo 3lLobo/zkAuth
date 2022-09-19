@@ -1,11 +1,11 @@
-import "../styles/globals.css"
-import type { AppProps } from "next/app"
-import { Layout } from "../components"
-import { ThemeProvider } from "next-themes"
-import { DAppProvider } from "@usedapp/core"
+import '../styles/globals.css'
+import type { AppProps } from 'next/app'
+import { Layout } from '../components'
+import { ThemeProvider } from 'next-themes'
+import { DAppProvider } from '@usedapp/core'
 
 const config = {
-  multicallAddresses: ["0x"],
+  multicallAddresses: ['0x'],
 }
 
 function MyApp({ Component, pageProps }: AppProps) {

@@ -1,4 +1,4 @@
-import { ModalSetSocial } from "./"
+import { ModalSetSocial } from './'
 
 const BoxSocialRecovery = () => {
   return (

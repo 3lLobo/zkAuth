@@ -1,5 +1,5 @@
-import { Navbar } from "./"
-import Head from "next/head"
+import { Navbar } from './'
+import Head from 'next/head'
 
 export default function Layout(props: any) {
   return (

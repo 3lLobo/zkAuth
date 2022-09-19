@@ -1,5 +1,5 @@
-import { useEthers } from "@usedapp/core"
-import { DropdownAccount, ToggleColorMode } from "./"
+import { useEthers } from '@usedapp/core'
+import { DropdownAccount, ToggleColorMode } from './'
 
 const Navbar = () => {
   const { account } = useEthers()
