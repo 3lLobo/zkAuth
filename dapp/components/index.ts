@@ -12,5 +12,6 @@ export { default as Layout } from './Layout'
 export { default as BoxPendingTransaction } from './BoxPendingTransaction'
 export { default as BoxAuthSystem } from './BoxAuthSystem'
 export { default as BoxSocialRecovery } from './BoxSocialRecovery'
+export { default as BoxApprovedTxs } from './BoxApprovedTxs'
 export { default as ModalSetSocial } from './ModalSetSocial'
-
+export { default as ModalApprovedTxs } from './ModalApprovedTxs'
