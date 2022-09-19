@@ -1,4 +1,4 @@
-import { Navbar } from './'
+import { Navbar } from '..'
 import Head from 'next/head'
 
 export default function Layout(props: any) {
