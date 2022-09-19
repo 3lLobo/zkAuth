@@ -22,7 +22,7 @@ const ToggleColorMode = () => {
         onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
       >
         {theme === 'light' ? (
-          <MoonIcon className="h-4 w-4 text-snow fill-snow" />
+          <MoonIcon className="h-4 w-4 text-gray-500 fill-gray-500" />
         ) : (
           <SunIcon className="h-4 w-4 text-snow fill-snow" />
         )}

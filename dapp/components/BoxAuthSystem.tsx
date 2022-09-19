@@ -20,11 +20,11 @@ const BoxAuthSystem = () => {
       bg-white  dark:bg-gray-800 
       border-gray-200  dark:border-gray-700"
     >
-      <div className="col-span-8 flex flex-col gap-4">
-        <div className="text-sm text-gray-600 dark:text-gray-400">
+      <div className="col-span-8 flex flex-col">
+        <div className="text-sm text-gray-600 dark:text-gray-400 mb-3">
           Your 2FA System
         </div>
-        <div className="text-2xl">zk-TOTP</div>
+        <div className="text-2xl mb-5">zk-TOTP</div>
         <button className="w-3/4 px-2 py-2 button-unsaturated">
           Reset Passwords
         </button>
