@@ -9,3 +9,6 @@ typechain-types
 cache
 artifacts
 
+.debugger/
+compiler_config.json
+remix-compiler.config.js

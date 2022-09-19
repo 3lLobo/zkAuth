@@ -1,7 +1,7 @@
 import { useEthers } from '@usedapp/core'
 import { useTheme } from 'next-themes'
 import Image from 'next/image'
-import { DropdownAccount, ToggleColorMode } from './'
+import { DropdownAccount, ToggleColorMode } from '.'
 
 const Navbar = () => {
   const { account } = useEthers()
