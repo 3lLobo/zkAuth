@@ -27,3 +27,11 @@
 .filter-light {
   filter: invert(20%);
 }
+
+.filter-logo-dark {
+  filter: invert(100%);
+}
+
+.filter-logo-light {
+  filter: invert(0%);
+}
