@@ -9,3 +9,8 @@ export { default as TotpSetup } from './TotpSetup'
 export { default as ZkPasswordSetup } from './ZkPasswordSetup'
 export { default as CardChoice } from './CardChoice'
 export { default as Layout } from './Layout'
+export { default as BoxPendingTransaction } from './BoxPendingTransaction'
+export { default as BoxAuthSystem } from './BoxAuthSystem'
+export { default as BoxSocialRecovery } from './BoxSocialRecovery'
+export { default as ModalSetSocial } from './ModalSetSocial'
+
