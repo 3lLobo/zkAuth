@@ -3,6 +3,7 @@ import { useTheme } from 'next-themes'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { DropdownAccount, ToggleColorMode } from '.'
+import { ConnectWalletButton } from '..'
 
 const Navbar = () => {
   const { account } = useEthers()
@@ -24,14 +25,19 @@ const Navbar = () => {
           <Image
             src="/zkAuth.svg"
             height={50}
-            width={150}
+            width={100}
             className={`filter-logo-${theme}`}
           />
         ) : (
           <></>
         )}
         <div className="flex flex-row space-x-4 align-middle">
-          {account ? <DropdownAccount account={account} /> : <></>}
+          {account ? (
+            <DropdownAccount account={account} />
+          ) : (
+            <></>
+            //<ConnectWalletButton />
+          )}
 
           <ToggleColorMode />
         </div>
