@@ -118,6 +118,8 @@ contract ZkSocialRecoveryWallet {
         verifyProofForTrustee(a, b, c, Input)
         returns (uint256)
     {
+        console.log("trustee hash", trusteeToPasswordHash[msg.sender]);
+        console.log("Input", Input[0]);
         require(
             Input[0] == trusteeToPasswordHash[msg.sender],
             "Wrong password"
