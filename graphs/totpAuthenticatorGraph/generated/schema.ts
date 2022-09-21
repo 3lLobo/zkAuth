@@ -144,6 +144,15 @@ export class AuthData extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get authentication(): string {
+    let value = this.get("authentication");
+    return value!.toString();
+  }
+
+  set authentication(value: string) {
+    this.set("authentication", Value.fromString(value));
+  }
+
   get totp5(): BigInt {
     let value = this.get("totp5");
     return value!.toBigInt();
@@ -212,6 +221,15 @@ export class AuthStatus extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get authentication(): string {
+    let value = this.get("authentication");
+    return value!.toString();
+  }
+
+  set authentication(value: string) {
+    this.set("authentication", Value.fromString(value));
+  }
+
   get hasResponse(): boolean {
     let value = this.get("hasResponse");
     return value!.toBoolean();
@@ -230,13 +248,21 @@ export class AuthStatus extends Entity {
     this.set("isValid", Value.fromBoolean(value));
   }
 
-  get validationTime(): string {
+  get validationTime(): string | null {
     let value = this.get("validationTime");
-    return value!.toString();
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toString();
+    }
   }
 
-  set validationTime(value: string) {
-    this.set("validationTime", Value.fromString(value));
+  set validationTime(value: string | null) {
+    if (!value) {
+      this.unset("validationTime");
+    } else {
+      this.set("validationTime", Value.fromString(<string>value));
+    }
   }
 }
 

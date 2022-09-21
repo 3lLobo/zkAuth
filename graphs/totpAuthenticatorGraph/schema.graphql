@@ -1,16 +1,16 @@
-
 type Authentication @entity {
-  id: ID!
+  id: ID! # same as requestId
   requestId: BigInt!
   requestor: Address!
   requestee: Address!
-  authData: AuthData
-  status: AuthStatus
+  authData: AuthData @derivedFrom(field: "authentication")
+  status: AuthStatus @derivedFrom(field: "authentication")
   created: String!
 }
 
 type AuthData @entity {
-  id: ID!
+  id: ID! # requestId + data
+  authentication: Authentication!
   totp5: BigInt!
   totp6Hash: Bytes!
   genTime: BigInt!
@@ -18,14 +18,15 @@ type AuthData @entity {
 }
 
 type AuthStatus @entity {
-  id: ID!
+  id: ID! # requestId
+  authentication: Authentication!
   hasResponse: Boolean!
   isValid: Boolean!
-  validationTime: String!
+  validationTime: String
 }
 
 type Address @entity {
-  id: ID!
+  id: ID! # same as address
   address: Bytes!
   authOutgoing: [Authentication!] @derivedFrom(field: "requestor")
   authIncoming: [Authentication!] @derivedFrom(field: "requestee")

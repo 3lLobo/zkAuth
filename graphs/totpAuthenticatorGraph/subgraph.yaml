@@ -6,9 +6,8 @@ dataSources:
     name: TotpAuthenticator
     network: optimism-goerli
     source:
-      address: "0xfa99801Ec6BeFcbfC1eB2d12dc8255453574b276"
       abi: TotpAuthenticator
-      startBlock: 1213693
+      address: "0xfa99801Ec6BeFcbfC1eB2d12dc8255453574b276"
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

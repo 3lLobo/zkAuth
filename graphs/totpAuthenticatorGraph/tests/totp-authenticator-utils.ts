@@ -1,12 +1,12 @@
-import { newMockEvent } from "matchstick-as"
-import { ethereum, Address, BigInt } from "@graphprotocol/graph-ts"
+import { newMockEvent } from 'matchstick-as'
+import { ethereum, Address, BigInt } from '@graphprotocol/graph-ts'
 import {
   EventAuthRequest,
   EventAuthResponse,
   EventAuthValid,
   EventResetContract,
-  OwnershipTransferred
-} from "../generated/TotpAuthenticator/TotpAuthenticator"
+  OwnershipTransferred,
+} from '../generated/TotpAuthenticator/TotpAuthenticator'
 
 export function createEventAuthRequestEvent(
   requestor: Address,
@@ -18,14 +18,14 @@ export function createEventAuthRequestEvent(
   eventAuthRequestEvent.parameters = new Array()
 
   eventAuthRequestEvent.parameters.push(
-    new ethereum.EventParam("requestor", ethereum.Value.fromAddress(requestor))
+    new ethereum.EventParam('requestor', ethereum.Value.fromAddress(requestor))
   )
   eventAuthRequestEvent.parameters.push(
-    new ethereum.EventParam("target", ethereum.Value.fromAddress(target))
+    new ethereum.EventParam('target', ethereum.Value.fromAddress(target))
   )
   eventAuthRequestEvent.parameters.push(
     new ethereum.EventParam(
-      "requestId",
+      'requestId',
       ethereum.Value.fromUnsignedBigInt(requestId)
     )
   )
@@ -43,16 +43,16 @@ export function createEventAuthResponseEvent(
   eventAuthResponseEvent.parameters = new Array()
 
   eventAuthResponseEvent.parameters.push(
-    new ethereum.EventParam("responder", ethereum.Value.fromAddress(responder))
+    new ethereum.EventParam('responder', ethereum.Value.fromAddress(responder))
   )
   eventAuthResponseEvent.parameters.push(
     new ethereum.EventParam(
-      "requestId",
+      'requestId',
       ethereum.Value.fromUnsignedBigInt(requestId)
     )
   )
   eventAuthResponseEvent.parameters.push(
-    new ethereum.EventParam("response", ethereum.Value.fromTuple(response))
+    new ethereum.EventParam('response', ethereum.Value.fromTuple(response))
   )
 
   return eventAuthResponseEvent
@@ -68,13 +68,13 @@ export function createEventAuthValidEvent(
 
   eventAuthValidEvent.parameters.push(
     new ethereum.EventParam(
-      "requestId",
+      'requestId',
       ethereum.Value.fromUnsignedBigInt(requestId)
     )
   )
   eventAuthValidEvent.parameters.push(
     new ethereum.EventParam(
-      "authentication",
+      'authentication',
       ethereum.Value.fromTuple(authentication)
     )
   )
@@ -90,7 +90,7 @@ export function createEventResetContractEvent(
   eventResetContractEvent.parameters = new Array()
 
   eventResetContractEvent.parameters.push(
-    new ethereum.EventParam("time", ethereum.Value.fromUnsignedBigInt(time))
+    new ethereum.EventParam('time', ethereum.Value.fromUnsignedBigInt(time))
   )
 
   return eventResetContractEvent
@@ -108,12 +108,12 @@ export function createOwnershipTransferredEvent(
 
   ownershipTransferredEvent.parameters.push(
     new ethereum.EventParam(
-      "previousOwner",
+      'previousOwner',
       ethereum.Value.fromAddress(previousOwner)
     )
   )
   ownershipTransferredEvent.parameters.push(
-    new ethereum.EventParam("newOwner", ethereum.Value.fromAddress(newOwner))
+    new ethereum.EventParam('newOwner', ethereum.Value.fromAddress(newOwner))
   )
 
   return ownershipTransferredEvent
