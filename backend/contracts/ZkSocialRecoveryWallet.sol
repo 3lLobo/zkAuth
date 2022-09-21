@@ -17,17 +17,21 @@ interface IHashCheckVerifier {
 contract ZkSocialRecoveryWallet {
   address hashCheckVerifier;
 
-  address private owner;
+  address public owner;
+
+  uint256 private ownerPasswordHash;
 
   uint256 private thresholdForRecovery;
 
-  uint256 private currentRecoveryNumber;
+  uint256 public currentRecoveryNumber;
 
   mapping(address => bool) Trustee;
 
   mapping(address => uint256) trusteeToPasswordHash;
 
   mapping(address => bool) pastOwners;
+
+  mapping(uint256 => bool) usedProofs;
 
   bool isRecoveryOn;
 
@@ -86,11 +90,16 @@ contract ZkSocialRecoveryWallet {
       IHashCheckVerifier(hashCheckVerifier).verifyProof(a, b, c, Input),
       'Password proof invalid!'
     );
+    require(!usedProofs[a[0]],"Proof is used");
+
     _;
+
+    usedProofs[a[0]] = true;
   }
 
   constructor(
     address _hashCheckVerifier,
+    uint256 _ownerPasswordHash,
     address[] memory _trustees,
     uint256[] memory _passwordHashes,
     uint256 _thresholdForRecovery
@@ -107,6 +116,7 @@ contract ZkSocialRecoveryWallet {
 
     hashCheckVerifier = _hashCheckVerifier;
     owner = msg.sender;
+    ownerPasswordHash = _ownerPasswordHash;
 
     for (uint256 i = 0; i < _trustees.length; i++) {
       require(!Trustee[_trustees[i]], 'Duplicate trustee in list');
@@ -164,12 +174,13 @@ contract ZkSocialRecoveryWallet {
     verifyProofForTrustee(a, b, c, Input)
     returns (bool success)
   {
+    require(Input[0] == trusteeToPasswordHash[msg.sender], 'Wrong password');
+    console.log("Here1");
     require(
       recoveryRoundNumber <= currentRecoveryNumber,
       'Wrong Recovery round number'
     );
-    require(Input[0] == trusteeToPasswordHash[msg.sender], 'Wrong password');
-
+    console.log("Here");
     RecoveryProcedure storage recovery = recoveryRoundNumberToProcedure[
       recoveryRoundNumber
     ];
@@ -194,6 +205,7 @@ contract ZkSocialRecoveryWallet {
     RecoveryShouldBeInProcess
     verifyProofForTrustee(a, b, c, Input)
   {
+    require(Input[0] == trusteeToPasswordHash[msg.sender], 'Wrong password');
     RecoveryProcedure storage recovery = recoveryRoundNumberToProcedure[
       recoveryRoundNumber
     ];
@@ -212,12 +224,21 @@ contract ZkSocialRecoveryWallet {
     emit RecoveryExecuted(old, owner, recoveryRoundNumber);
   }
 
-  function cancelRecovery(uint256 recoveryRoundNumber)
+  function cancelRecovery(
+    uint256[2] memory a,
+    uint256[2][2] memory b,
+    uint256[2] memory c,
+    uint256[1] memory Input,
+    uint256 recoveryRoundNumber
+  )
     external
     isOwner
     RecoveryShouldBeInProcess
+    verifyProofForTrustee(a, b, c, Input)
   {
+    require(Input[0] == ownerPasswordHash, 'Wrong password');
     isRecoveryOn = false;
     emit RecoveryCancelled(owner, recoveryRoundNumber);
   }
+
 }

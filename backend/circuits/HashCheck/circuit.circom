@@ -1,19 +1,21 @@
 pragma circom 2.0.0;
 
-include "../../node_modules/circomlib/circuits/mimcsponge.circom";
+include "../../node_modules/circomlib/circuits/poseidon.circom";
 
 template Main() {
-  signal input x;
+  signal input pass;
+  signal input addr;
   signal input hash;
 
   signal output out;
 
-  component mimc = MiMCSponge(1, 220, 1);
-  mimc.ins[0] <== x;
-  mimc.k <== 0;
+  component h = Poseidon(2);
 
-  out <== mimc.outs[0];
+  h.inputs[0] <== addr;
+  h.inputs[1] <== pass;
 
+  out <== h.out;
+ 
   out === hash;
 }
 
