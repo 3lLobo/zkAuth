@@ -25,6 +25,11 @@ describe("check ZkSocialRecoveryWallet", function () {
         let trustees = [trustee1.address, trustee2.address, trustee3.address];
         log(trustees,"trustees");
 
+        let HashCheckVerifier = await ethers.getContractFactory("HashCheckVerifier");
+        let hashCheckVerifier = await HashCheckVerifier.deploy();
+        await hashCheckVerifier.deployed();
+        log(hashCheckVerifier.address, "hashCheckVerifier");
+
         for(var i =0;i<trustees.length; i++){
             hashes.push(hash(passwords[i].toString()).toString());
         }
@@ -32,7 +37,7 @@ describe("check ZkSocialRecoveryWallet", function () {
         log(hashes,"hashes")
 
         let ZkSocialRecoveryWallet = await ethers.getContractFactory("ZkSocialRecoveryWallet");
-        zkSocialRecoveryWallet = await ZkSocialRecoveryWallet.deploy(trustees, hashes, 2);
+        zkSocialRecoveryWallet = await ZkSocialRecoveryWallet.deploy(hashCheckVerifier.address, trustees, hashes, 2);
         await zkSocialRecoveryWallet.deployed();
 
         log(zkSocialRecoveryWallet.address,"zksc addr");
