@@ -7,7 +7,7 @@ export default function Layout(props: any) {
       <Head>
         <title>zkAuth</title>
         <meta name="description" content="zero-knowledge Authentification" />
-        <link rel="icon" href="" />
+        <link rel="icon" type="image/svg+xml" href="/zkAuthIcon.svg" />
       </Head>
       <Navbar />
       <main>{props.children}</main>

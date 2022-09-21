@@ -63,7 +63,7 @@ const txBox = {
 const Dashboard: NextPage = () => {
   return (
     <div className="h-[calc(100vh-100px)] flex justify-center mt-10">
-      <div className="w-[80%] max-w-7xl flex flex-col">
+      <div className="w-[90%] max-w-6xl flex flex-col">
         <motion.div
           variants={containerUpperBoxes}
           initial="hidden"
