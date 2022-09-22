@@ -7,7 +7,7 @@ import { ethers } from 'ethers'
 
 const ConnectWalletButton = () => {
   const { theme } = useTheme()
-  const { activate } = useEthers()
+  const { activate, library } = useEthers()
   const [activateError, setActivateError] = useState('')
   // const { error } = useEthers()
   //   useEffect(() => {
@@ -77,12 +77,11 @@ const ConnectWalletButton = () => {
       var provider = new ethers.providers.Web3Provider(ethereum)
       const accounts = await provider.listAccounts()
       const connected = accounts.length > 0
-      console.log('CONNECTED', connected)
       if (connected) {
         activate(provider)
       }
     }
-    if (ethereum) {
+    if (ethereum && !library) {
       checkMetaMaskConnected()
     }
   })

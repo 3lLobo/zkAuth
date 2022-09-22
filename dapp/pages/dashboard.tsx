@@ -1,5 +1,8 @@
+import { useEthers } from '@usedapp/core'
+import { ethers } from 'ethers'
 import { motion } from 'framer-motion'
 import type { NextPage } from 'next'
+import { useCallback, useEffect } from 'react'
 import {
   BoxApprovedTxs,
   BoxAuthSystem,
@@ -61,6 +64,25 @@ const txBox = {
 }
 
 const Dashboard: NextPage = () => {
+  const { activate, library } = useEthers()
+
+  // Set up provider if already connected
+  const checkMetaMaskConnected = useCallback(async () => {
+    const { ethereum } = window
+    if (ethereum && !library) {
+      var provider = new ethers.providers.Web3Provider(ethereum)
+      const accounts = await provider.listAccounts()
+      const connected = accounts.length > 0
+      if (connected) {
+        activate(provider)
+      }
+    }
+  }, [activate])
+
+  useEffect(() => {
+    checkMetaMaskConnected()
+  }, [checkMetaMaskConnected])
+
   return (
     <div className="h-[calc(100vh-100px)] flex justify-center mt-10">
       <div className="w-[90%] max-w-6xl flex flex-col">
