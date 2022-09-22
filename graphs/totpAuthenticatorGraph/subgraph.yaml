@@ -1,0 +1,35 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: TotpAuthenticator
+    network: optimism-goerli
+    source:
+      abi: TotpAuthenticator
+      address: "0xfa99801Ec6BeFcbfC1eB2d12dc8255453574b276"
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - EventAuthRequest
+        - EventAuthResponse
+        - EventAuthValid
+        - EventResetContract
+        - OwnershipTransferred
+      abis:
+        - name: TotpAuthenticator
+          file: ./abis/TotpAuthenticator.json
+      eventHandlers:
+        - event: EventAuthRequest(address,address,uint256)
+          handler: handleEventAuthRequest
+        - event: EventAuthResponse(address,uint256,(uint256,bytes32,uint256))
+          handler: handleEventAuthResponse
+        - event: EventAuthValid(uint256,(bool,uint256,address))
+          handler: handleEventAuthValid
+        - event: EventResetContract(uint256)
+          handler: handleEventResetContract
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleOwnershipTransferred
+      file: ./src/totp-authenticator.ts
