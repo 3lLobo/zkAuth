@@ -1,0 +1,33 @@
+type Authentication @entity {
+  id: ID! # same as requestId
+  requestId: BigInt!
+  requestor: Address!
+  requestee: Address!
+  authData: AuthData @derivedFrom(field: "authentication")
+  status: AuthStatus @derivedFrom(field: "authentication")
+  created: String!
+}
+
+type AuthData @entity {
+  id: ID! # requestId + data
+  authentication: Authentication!
+  totp5: BigInt!
+  totp6Hash: Bytes!
+  genTime: BigInt!
+  created: String!
+}
+
+type AuthStatus @entity {
+  id: ID! # requestId
+  authentication: Authentication!
+  hasResponse: Boolean!
+  isValid: Boolean!
+  validationTime: String
+}
+
+type Address @entity {
+  id: ID! # same as address
+  address: Bytes!
+  authOutgoing: [Authentication!] @derivedFrom(field: "requestor")
+  authIncoming: [Authentication!] @derivedFrom(field: "requestee")
+}

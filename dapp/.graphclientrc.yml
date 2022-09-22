@@ -1,0 +1,9 @@
+# .graphclientrc.yml
+sources:
+  - name: zkauthtotp
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/3llobo/zkauthtotp
+
+documents:
+  - ./app/totpQuery.graphql
