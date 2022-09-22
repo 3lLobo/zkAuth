@@ -2,6 +2,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { MinusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { ethers } from 'ethers'
+import { AlchemyProvider } from '@ethersproject/providers'
 import { shortenAddress, useEthers, useResolveName } from '@usedapp/core'
 import { CheckIcon } from '@heroicons/react/20/solid'
 import { ThreeDots } from 'react-loader-spinner'
@@ -12,7 +13,20 @@ interface ModalSetSocialProps {}
 
 const ModalSetSocial = (props: ModalSetSocialProps) => {
   const [open, setOpen] = useState(false)
-  const { account, library: provider } = useEthers()
+  const { account } = useEthers()
+
+  // Setting Infura Provider TODO: Optimize
+  let providerIsSet = false
+  const [alchemyProvider, setInfuraProvider] = useState<
+    AlchemyProvider | undefined
+  >()
+  useEffect(() => {
+    if (!providerIsSet) {
+      const infura = new AlchemyProvider('homestead', process.env.API_KEY)
+      setInfuraProvider(infura)
+      providerIsSet = true
+    }
+  }, [providerIsSet])
 
   const onSubmit = (e: React.UIEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -69,9 +83,12 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
       ...accounts,
       [index]: { ...accounts[index], verified: 'loading' },
     })
-    if (provider && account) {
-      const addressfromENS = await provider.resolveName(accounts[index]['ens'])
-      console.log(addressfromENS)
+
+    if (alchemyProvider && account) {
+      // Get address from ENS if exists
+      const addressfromENS = await alchemyProvider.resolveName(
+        accounts[index]['ens']
+      )
       const isValidAccount = ethers.utils.isAddress(accounts[index]['address'])
 
       //Check that is not user's own account and not the same as others
@@ -110,7 +127,7 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
           })
           return
         } else {
-          const ensFromAdddress = await provider.lookupAddress(
+          const ensFromAdddress = await alchemyProvider.lookupAddress(
             accounts[index]['address']
           )
           setAccount({
