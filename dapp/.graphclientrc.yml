@@ -6,4 +6,4 @@ sources:
         endpoint: https://api.thegraph.com/subgraphs/name/3llobo/zkauthtotp
 
 documents:
-  - ./app/totpQuery.graphql
+  - ./graphql/totpQuery.graphql

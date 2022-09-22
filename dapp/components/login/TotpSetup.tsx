@@ -2,7 +2,6 @@ import { ArrowUturnLeftIcon } from '@heroicons/react/24/outline'
 import { useEthers } from '@usedapp/core'
 import { useState, useRef, useEffect } from 'react'
 import { usePinInput, PinInputActions } from 'react-pin-input-hook'
-import { useGetAuthQuery } from '../../app/graphApi'
 import { ModalVerifyTotp, QrCodeAuth } from './'
 
 var jsotp = require('jsotp')
@@ -61,13 +60,6 @@ const TotpSetup = (props: TotpSetupProps) => {
       setVerified(false)
     }
   }
-
-  const { data } = useGetAuthQuery({walletAddress: account})
-
-  useEffect(() => {
-    console.log("Data", data)
-    console.log("account", account)
-  },[data, account])
 
   if (!account) return null
   return (
