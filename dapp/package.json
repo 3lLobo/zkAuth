@@ -28,6 +28,7 @@
     "react-password-checklist": "^1.4.1",
     "react-pin-input-hook": "^1.0.8",
     "thirty-two": "^1.0.2",
+    "web3.storage": "^4.4.0",
     "web3modal": "^1.9.9"
   },
   "devDependencies": {
