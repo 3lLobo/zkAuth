@@ -14,9 +14,9 @@ interface IOtpMerkleTreeVerifier {
 
 contract ZkOtpValidator{
 
-    uint256 root;
+    uint256 immutable root;
 
-    address verifier;
+    address immutable verifier;
 
     uint256 lastValidatedTimestamp;
 
