@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import { ethers } from 'ethers'
-import { useEthers, useResolveName } from '@usedapp/core'
+import { shortenAddress, useEthers, useResolveName } from '@usedapp/core'
 import { CheckIcon } from '@heroicons/react/20/solid'
 import { ThreeDots } from 'react-loader-spinner'
 import { useTheme } from 'next-themes'
@@ -27,9 +27,9 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
     verified: string
   }
   const [accounts, setAccount] = useState<Accounts>({
-    0: { address: '', ens: '', verified: '' },
-    1: { address: '', ens: '', verified: '' },
-    2: { address: '', ens: '', verified: '' },
+    0: { address: '', ens: '', verified: '', value: '' },
+    1: { address: '', ens: '', verified: '', value: '' },
+    2: { address: '', ens: '', verified: '', value: '' },
   })
 
   const setAddress = (name: string, index: string) => {
@@ -37,12 +37,24 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
     if (name.includes('.')) {
       setAccount({
         ...accounts,
-        [index]: { ...accounts[index], address: '', ens: name, verified: '' },
+        [index]: {
+          ...accounts[index],
+          address: '',
+          ens: name,
+          verified: '',
+          value: name,
+        },
       })
     } else {
       setAccount({
         ...accounts,
-        [index]: { ...accounts[index], address: name, ens: '', verified: '' },
+        [index]: {
+          ...accounts[index],
+          address: name,
+          ens: '',
+          verified: '',
+          value: name,
+        },
       })
     }
   }
@@ -78,6 +90,9 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
               ...accounts[index],
               address: addressfromENS,
               verified: 'verified',
+              value: `${accounts[index]['ens']} (${shortenAddress(
+                addressfromENS
+              )})`,
             },
           })
         }
@@ -98,6 +113,11 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
               ...accounts[index],
               ens: ensFromAdddress ?? '',
               verified: 'verified',
+              value: ensFromAdddress
+                ? `${ensFromAdddress} (${shortenAddress(
+                    accounts[index]['address']
+                  )})`
+                : accounts[index]['address'],
             },
           })
         }
@@ -198,6 +218,7 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
                                 type="text"
                                 className="w-5/6 border-none bg-transparent dark:bg-transparent outline-0 focus:ring-0 placeholder-gray-300 dark:placeholder-gray-500"
                                 placeholder="0x000...0000 or vitalik.eth"
+                                value={accounts[index]['value']}
                                 onChange={(e) =>
                                   setAddress(e.target.value, index.toString())
                                 }
