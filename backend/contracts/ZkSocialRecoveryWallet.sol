@@ -1,8 +1,9 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.9;
 
-import '@openzeppelin/contracts/access/Ownable.sol';
+import '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol';
 import './Verifiers/HashCheckVerifier.sol';
+import './ZkOtpValidator.sol';
 import 'hardhat/console.sol';
 
 interface IHashCheckVerifier {
@@ -14,7 +15,7 @@ interface IHashCheckVerifier {
   ) external view returns (bool);
 }
 
-contract ZkSocialRecoveryWallet {
+contract ZkSocialRecoveryWallet is IERC721Receiver {
   address hashCheckVerifier;
 
   address public owner;
@@ -34,6 +35,8 @@ contract ZkSocialRecoveryWallet {
   mapping(uint256 => bool) usedProofs;
 
   bool isRecoveryOn;
+
+  ZkOtpValidator otpVerifier;
 
   struct RecoveryProcedure {
     uint256 numberOfVotesInSupport;
@@ -90,7 +93,7 @@ contract ZkSocialRecoveryWallet {
       IHashCheckVerifier(hashCheckVerifier).verifyProof(a, b, c, Input),
       'Password proof invalid!'
     );
-    require(!usedProofs[a[0]],"Proof is used");
+    require(!usedProofs[a[0]], 'Proof is used');
 
     _;
 
@@ -102,7 +105,9 @@ contract ZkSocialRecoveryWallet {
     uint256 _ownerPasswordHash,
     address[] memory _trustees,
     uint256[] memory _passwordHashes,
-    uint256 _thresholdForRecovery
+    uint256 _thresholdForRecovery,
+    uint256 _root,
+    address _otpVerifier
   ) {
     require(_hashCheckVerifier != address(0), 'Zero address verifier');
     require(
@@ -125,6 +130,8 @@ contract ZkSocialRecoveryWallet {
     }
 
     thresholdForRecovery = _thresholdForRecovery;
+
+    otpVerifier = new ZkOtpValidator(_root, _otpVerifier);
   }
 
   function startRecovery(
@@ -175,12 +182,12 @@ contract ZkSocialRecoveryWallet {
     returns (bool success)
   {
     require(Input[0] == trusteeToPasswordHash[msg.sender], 'Wrong password');
-    console.log("Here1");
+    console.log('Here1');
     require(
       recoveryRoundNumber <= currentRecoveryNumber,
       'Wrong Recovery round number'
     );
-    console.log("Here");
+    console.log('Here');
     RecoveryProcedure storage recovery = recoveryRoundNumberToProcedure[
       recoveryRoundNumber
     ];
@@ -241,4 +248,29 @@ contract ZkSocialRecoveryWallet {
     emit RecoveryCancelled(owner, recoveryRoundNumber);
   }
 
+  function executeTxn(
+    uint256[2] memory a,
+    uint256[2][2] memory b,
+    uint256[2] memory c,
+    uint256[2] memory input,
+    address callee,
+    uint256 value
+  ) external isOwner returns (bytes memory result) {
+    require(otpVerifier.verifyOTP(a, b, c, input), 'Proof failed');
+    (bool success, bytes memory result) = callee.call{value: value}("");
+    require(success, 'external call reverted');
+    // emit TransactionExecuted(callee, value, data);
+    return result;
+  }
+
+  function onERC721Received(
+    address,
+    address,
+    uint256,
+    bytes memory
+  ) public pure override returns (bytes4) {
+    return this.onERC721Received.selector;
+  }
+
+  receive() external payable {}
 }
