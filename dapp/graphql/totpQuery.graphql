@@ -1,0 +1,57 @@
+query AddressAll($walletAddress: ID!) {
+  address(id: $walletAddress) {
+    id
+    authIncoming(orderBy: requestId, orderDirection: desc) {
+      created
+      requestId
+      id
+      authData {
+        created
+        genTime
+        totp5
+        id
+        totp6Hash
+      }
+      requestee {
+        id
+        address
+      }
+      requestor {
+        address
+        id
+      }
+      status {
+        validationTime
+        isValid
+        id
+        hasResponse
+      }
+    }
+    authOutgoing(orderBy: requestId, orderDirection: desc) {
+      authData {
+        totp6Hash
+        totp5
+        id
+        genTime
+        created
+      }
+      created
+      id
+      requestId
+      requestee {
+        id
+        address
+      }
+      requestor {
+        id
+        address
+      }
+      status {
+        validationTime
+        isValid
+        id
+        hasResponse
+      }
+    }
+  }
+}

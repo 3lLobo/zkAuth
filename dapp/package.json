@@ -36,6 +36,7 @@
     "web3modal": "^1.9.9"
   },
   "devDependencies": {
+    "@graphprotocol/client-cli": "^2.2.11",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/line-clamp": "^0.4.2",
@@ -47,6 +48,8 @@
     "autoprefixer": "^10.4.8",
     "eslint": "8.23.0",
     "eslint-config-next": "12.3.0",
+    "graphql": "^16.6.0",
+    "graphql-esm": "^16.5.0",
     "postcss": "^8.4.16",
     "postcss-import": "^15.0.0",
     "prettier": "^2.7.1",
