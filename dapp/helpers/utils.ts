@@ -5,6 +5,7 @@ import totp from 'totp-generator'
 import crypto from 'crypto-browserify'
 import base32 from 'hi-base32'
 import QRCode from 'qrcode'
+import { ethers } from 'ethers'
 
 const uriPrefix = 'otpauth://totp/zkAuth:account?secret='
 const uriSuffix = '&issuer=zkAuth'
@@ -41,6 +42,7 @@ export async function prepareMerkleTree() {
   }
   let root = hashes[2 ** 8 - 2]
   console.log('Merkle root:', root)
+  // console.table("hashes", hashes)
 
   // TODO: Replace this local storage to IPFS or Ceramic
   localStorage.setItem('OTPhashes', hashes.join(','))
@@ -112,3 +114,75 @@ function prepareSecret(length = 20) {
   const randomBuffer = crypto.randomBytes(length)
   return base32.encode(randomBuffer).replace(/=/g, '')
 }
+
+// request MetaMask to encrypt data with the users wallet
+async function encrytpData(data: string): Promise<string> {
+  var provider = new ethers.providers.Web3Provider(window.ethereum)
+  var from = await provider.listAccounts()
+
+  const encryptedData = await provider.provider.request({
+    method: 'eth_decrypt',
+    params: [data, from[0]],
+  });
+
+  return encryptedData
+}
+
+// request MetaMask to decrypt data with the users wallet
+async function decrytpData(encryptedData: string): Promise<string> {
+  var provider = new ethers.providers.Web3Provider(window.ethereum)
+  var from = await provider.listAccounts()
+
+  const data = await provider.provider.request({
+    method: 'eth_decrypt',
+    params: [encryptedData, from[0]],
+  })
+
+  return data
+}
+
+// Using EPI-712 to sign the msg. https://eips.ethereum.org/EIPS/eip-712
+async function signMsg(msg: string): Promise<string> {
+
+  var provider = new ethers.providers.Web3Provider(window.ethereum)
+  var from = await provider.listAccounts()
+
+  const signedMsg: string = await provider.provider.request(
+    {
+      method: 'eth_signTypedData_v4',
+      params: [from[0], msgParams(msg)],
+      from: from[0],
+    }
+  )
+  return signedMsg
+}
+
+// Standard msg to be signed resolving in the key for encrytion
+const msgParams = (Message: string): string => {
+  return JSON.stringify({
+    domain: {
+      name: 'zkAuth App',
+      version: '1.11',
+    },
+    // Defining the message signing data content.
+    message: {
+      Key: "zk-Key",
+      Message,
+    },
+    // Refers to the keys of the *types* object below.
+    primaryType: 'SignedKey',
+    types: {
+      EIP712Domain: [
+        { name: 'name', type: 'string' },
+        { name: 'version', type: 'string' },
+      ],
+      SignedKey: [
+        { name: 'Message', type: 'string' },
+        { name: 'Key', type: 'string' },
+      ],
+    },
+  }
+  )
+};
+
+const exampleMsg: string = "Sign this msg to provide a wallet-bound key for en-/decryption of the Merkle tree hashes used to proof your authentication with zero Knowledge. Also: plant a tree 🌳"
