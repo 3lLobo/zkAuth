@@ -134,7 +134,7 @@ const RecoveryBox = () => {
           </a>
         </Link>
       </div>
-      <form className="space-y-6" action="#">
+      <form className="space-y-6 mb-2" action="#">
         <h5 className="text-2xl font-medium flex justify-center text-gray-900 dark:text-white">
           Validate Account Recovery
         </h5>
@@ -213,7 +213,7 @@ const RecoveryBox = () => {
             id="password"
             name="password"
             type="text"
-            className="w-full p-2.5 rounded-lg
+            className="w-full p-2.5 mb-4 rounded-lg
               bg-gray-50 border border-gray-300 text-gray-900  focus:ring-blue-500 focus:border-blue-500  dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
             placeholder="••••••••"
             onChange={(e) => setPassword(e.target.value)}
