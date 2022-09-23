@@ -11,11 +11,11 @@ const config = {
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider attribute="class" enableSystem={false} defaultTheme="dark">
-      <DAppProvider config={config}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </DAppProvider>
+        <DAppProvider config={config}>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </DAppProvider>
     </ThemeProvider>
   )
 }

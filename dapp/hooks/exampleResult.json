@@ -1,0 +1,130 @@
+{
+  "data": {
+      "address": {
+          "id": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d",
+          "authIncoming": [
+              {
+                  "created": "1663603102",
+                  "requestId": "1",
+                  "id": "1",
+                  "authData": {
+                      "created": "1663603325",
+                      "genTime": "111111",
+                      "totp5": "12345",
+                      "id": "1_data",
+                      "totp6Hash": "0x4a438cf911dc63bd7d53c1be977516e82f4d8f19b950d72d6730d4717709eae1"
+                  },
+                  "requestee": {
+                      "id": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d",
+                      "address": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d"
+                  },
+                  "requestor": {
+                      "address": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d",
+                      "id": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d"
+                  },
+                  "status": {
+                      "validationTime": null,
+                      "isValid": false,
+                      "id": "1_status",
+                      "hasResponse": true
+                  }
+              },
+              {
+                  "created": "1663603102",
+                  "requestId": "0",
+                  "id": "0",
+                  "authData": {
+                      "created": "1663603342",
+                      "genTime": "111111",
+                      "totp5": "12345",
+                      "id": "0_data",
+                      "totp6Hash": "0x5a438cf911dc63bd7d53c1be977516e82f4d8f19b950d72d6730d4717709eae1"
+                  },
+                  "requestee": {
+                      "id": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d",
+                      "address": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d"
+                  },
+                  "requestor": {
+                      "address": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d",
+                      "id": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d"
+                  },
+                  "status": {
+                      "validationTime": null,
+                      "isValid": false,
+                      "id": "0_status",
+                      "hasResponse": true
+                  }
+              }
+          ],
+          "authOutgoing": [
+              {
+                  "authData": null,
+                  "created": "1663603122",
+                  "id": "2",
+                  "requestId": "2",
+                  "requestee": {
+                      "id": "0x5e9607ee52286732a5e3a0fc57df367bcb8adaa5",
+                      "address": "0x5e9607ee52286732a5e3a0fc57df367bcb8adaa5"
+                  },
+                  "requestor": {
+                      "id": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d",
+                      "address": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d"
+                  },
+                  "status": null
+              },
+              {
+                  "authData": {
+                      "totp6Hash": "0x4a438cf911dc63bd7d53c1be977516e82f4d8f19b950d72d6730d4717709eae1",
+                      "totp5": "12345",
+                      "id": "1_data",
+                      "genTime": "111111",
+                      "created": "1663603325"
+                  },
+                  "created": "1663603102",
+                  "id": "1",
+                  "requestId": "1",
+                  "requestee": {
+                      "id": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d",
+                      "address": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d"
+                  },
+                  "requestor": {
+                      "id": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d",
+                      "address": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d"
+                  },
+                  "status": {
+                      "validationTime": null,
+                      "isValid": false,
+                      "id": "1_status",
+                      "hasResponse": true
+                  }
+              },
+              {
+                  "authData": {
+                      "totp6Hash": "0x5a438cf911dc63bd7d53c1be977516e82f4d8f19b950d72d6730d4717709eae1",
+                      "totp5": "12345",
+                      "id": "0_data",
+                      "genTime": "111111",
+                      "created": "1663603342"
+                  },
+                  "created": "1663603102",
+                  "id": "0",
+                  "requestId": "0",
+                  "requestee": {
+                      "id": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d",
+                      "address": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d"
+                  },
+                  "requestor": {
+                      "id": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d",
+                      "address": "0x369551e7c1d29756e18ba4ed7f85f2e6663e1e8d"
+                  },
+                  "status": {
+                      "validationTime": null,
+                      "isValid": false,
+                      "id": "0_status",
+                      "hasResponse": true
+                  }
+              }
+          ]
+      }
+  }
+}
