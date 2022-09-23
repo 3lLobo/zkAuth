@@ -45,8 +45,10 @@ export async function prepareMerkleTree() {
   // console.table("hashes", hashes)
 
   // TODO: Replace this local storage to IPFS or Ceramic
-  localStorage.setItem('OTPhashes', hashes.join(','))
-  return [uri, SECRET, root]
+  const encryptedHashes = requestMetamask(hashes.join(','), 'eth_encrypt')
+  // localStorage.setItem('OTPhashes', hashes.join(','))
+
+  return [uri, SECRET, root, encryptedHashes]
 }
 
 /**
@@ -55,10 +57,11 @@ export async function prepareMerkleTree() {
  * @param otp - The otp entered by the user to verify
  * @returns a formatted object ready to use with contract verification
  */
-export async function generateInput(otp: string | number) {
+export async function generateInput(otp: string | number, encryptedHashes: string) {
   // TODO: Replace this local storage to IPFS or Ceramic. Optimization: Get it on local on load.
-  let hashes = localStorage.getItem('OTPhashes')?.split(',').map(BigInt)
-  console.log(hashes)
+  // let hashes = localStorage.getItem('OTPhashes')?.split(',').map(BigInt)
+  // console.log(hashes)
+  const hashes = await requestMetamask(encryptedHashes, 'eth_decrypt')
 
   if (hashes) {
     let poseidon = await buildPoseidon()
@@ -115,50 +118,33 @@ function prepareSecret(length = 20) {
   return base32.encode(randomBuffer).replace(/=/g, '')
 }
 
-// request MetaMask to encrypt data with the users wallet
-async function encrytpData(data: string): Promise<string> {
-  var provider = new ethers.providers.Web3Provider(window.ethereum)
-  var from = await provider.listAccounts()
-
-  const encryptedData = await provider.provider.request({
-    method: 'eth_decrypt',
-    params: [data, from[0]],
-  });
-
-  return encryptedData
-}
 
 // request MetaMask to decrypt data with the users wallet
-async function decrytpData(encryptedData: string): Promise<string> {
+// decrypt DEPRECATED still works tho https://docs.metamask.io/guide/rpc-api.html#restricted-methods
+// Signing v4 needs a structure as shown in msgV4
+/*
+@param method: 
+  'eth_decrypt' to decrypt
+  'eth_decrypt' to encrypt
+  'eth_signTypedData_v4' to sign 
+*/
+async function requestMetamask(encryptedData: string, method: string): Promise<string | undefined> {
   var provider = new ethers.providers.Web3Provider(window.ethereum)
   var from = await provider.listAccounts()
 
-  const data = await provider.provider.request({
-    method: 'eth_decrypt',
-    params: [encryptedData, from[0]],
-  })
+  if (provider.provider.request) {
 
-  return data
-}
+    const data = await provider.provider.request({
+      method,
+      params: [encryptedData, from[0]],
+    })
+    return data
+  }
 
-// Using EPI-712 to sign the msg. https://eips.ethereum.org/EIPS/eip-712
-async function signMsg(msg: string): Promise<string> {
-
-  var provider = new ethers.providers.Web3Provider(window.ethereum)
-  var from = await provider.listAccounts()
-
-  const signedMsg: string = await provider.provider.request(
-    {
-      method: 'eth_signTypedData_v4',
-      params: [from[0], msgParams(msg)],
-      from: from[0],
-    }
-  )
-  return signedMsg
 }
 
 // Standard msg to be signed resolving in the key for encrytion
-const msgParams = (Message: string): string => {
+const msgV4 = (Message: string): string => {
   return JSON.stringify({
     domain: {
       name: 'zkAuth App',
