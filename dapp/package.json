@@ -17,6 +17,7 @@
     "circomlibjs": "^0.1.7",
     "crypto-browserify": "^3.12.0",
     "dotenv": "^16.0.2",
+    "eth-sig-util": "^3.0.1",
     "ethers": "^5.7.0",
     "framer-motion": "^7.3.5",
     "fs": "^0.0.1-security",
@@ -31,8 +32,8 @@
     "react-password-checklist": "^1.4.1",
     "react-pin-input-hook": "^1.0.8",
     "thirty-two": "^1.0.2",
-    "web3.storage": "^4.4.0",
     "totp-generator": "^0.0.13",
+    "web3.storage": "^4.4.0",
     "web3modal": "^1.9.9"
   },
   "devDependencies": {
@@ -48,8 +49,7 @@
     "autoprefixer": "^10.4.8",
     "eslint": "8.23.0",
     "eslint-config-next": "12.3.0",
-    "graphql": "^16.6.0",
-    "graphql-esm": "^16.5.0",
+    "graphql": "16.1.0",
     "postcss": "^8.4.16",
     "postcss-import": "^15.0.0",
     "prettier": "^2.7.1",

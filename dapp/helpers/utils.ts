@@ -6,6 +6,7 @@ import crypto from 'crypto-browserify'
 import base32 from 'hi-base32'
 import QRCode from 'qrcode'
 import { ethers } from 'ethers'
+import { encrypt, EthEncryptedData } from 'eth-sig-util'
 
 const uriPrefix = 'otpauth://totp/zkAuth:account?secret='
 const uriSuffix = '&issuer=zkAuth'
@@ -45,7 +46,7 @@ export async function prepareMerkleTree() {
   // console.table("hashes", hashes)
 
   // TODO: Replace this local storage to IPFS or Ceramic
-  const encryptedHashes = requestMetamask(hashes.join(','), 'eth_encrypt')
+  const encryptedHashes = encryptMetamask(hashes.join(','))
   // localStorage.setItem('OTPhashes', hashes.join(','))
 
   return [uri, SECRET, root, encryptedHashes]
@@ -58,10 +59,9 @@ export async function prepareMerkleTree() {
  * @returns a formatted object ready to use with contract verification
  */
 export async function generateInput(otp: string | number, encryptedHashes: string) {
-  // TODO: Replace this local storage to IPFS or Ceramic. Optimization: Get it on local on load.
   // let hashes = localStorage.getItem('OTPhashes')?.split(',').map(BigInt)
   // console.log(hashes)
-  const hashes = await requestMetamask(encryptedHashes, 'eth_decrypt')
+  const hashes = await decryptOrSignMetamask(encryptedHashes, 'eth_decrypt')
 
   if (hashes) {
     let poseidon = await buildPoseidon()
@@ -121,34 +121,69 @@ function prepareSecret(length = 20) {
 
 // request MetaMask to decrypt data with the users wallet
 // decrypt DEPRECATED still works tho https://docs.metamask.io/guide/rpc-api.html#restricted-methods
+// Examples https://github.com/metamask/test-dapp
 // Signing v4 needs a structure as shown in msgV4
 /*
 @param method: 
   'eth_decrypt' to decrypt
-  'eth_decrypt' to encrypt
   'eth_signTypedData_v4' to sign 
 */
-async function requestMetamask(encryptedData: string, method: string): Promise<string | undefined> {
+export async function decryptOrSignMetamask(encryptedData: string, method: string): Promise<string | undefined> {
+  var provider = new ethers.providers.Web3Provider(window.ethereum)
+  var from = await provider.listAccounts()
+  let params
+
+  if (method === 'eth_signTypedData_v4') {
+    params = [from[0], msgV4(encryptedData)]
+  } else if (method === 'eth_decrypt') {
+    params = [encryptedData, from[0]]
+  } else {
+    return
+  }
+
+  if (provider.provider.request) {
+    const data = await provider.provider.request({
+      method,
+      params,
+    })
+    return data
+  }
+}
+
+
+export async function encryptMetamask(data: string): Promise<string | undefined> {
+
+  // let encryptionPublicKey: string;
   var provider = new ethers.providers.Web3Provider(window.ethereum)
   var from = await provider.listAccounts()
 
   if (provider.provider.request) {
-
-    const data = await provider.provider.request({
-      method,
-      params: [encryptedData, from[0]],
+    const encryptionPublicKey = await provider.provider.request({
+      method: 'eth_getEncryptionPublicKey',
+      params: [from[0]],
     })
-    return data
-  }
+    console.log("🚀 ~ file: utils.ts ~ line 157 ~ encryptMetamask ~ encryptionPublicKey", encryptionPublicKey, data)
 
+    if (encryptionPublicKey) {
+
+      const encryptedData = await encrypt(
+        encryptionPublicKey,
+        { data },
+        'x25519-xsalsa20-poly1305',
+      )
+
+      return JSON.stringify(encryptedData)
+    }
+  }
 }
 
-// Standard msg to be signed resolving in the key for encrytion
+// Standard V4 msg to be signed resolving in the key for encryption
 const msgV4 = (Message: string): string => {
   return JSON.stringify({
     domain: {
       name: 'zkAuth App',
       version: '1.11',
+      // verifyingContract: '0xfa99801Ec6BeFcbfC1eB2d12dc8255453574b276',
     },
     // Defining the message signing data content.
     message: {
@@ -161,6 +196,7 @@ const msgV4 = (Message: string): string => {
       EIP712Domain: [
         { name: 'name', type: 'string' },
         { name: 'version', type: 'string' },
+        // { name: 'verifyingContract', type: 'address' },
       ],
       SignedKey: [
         { name: 'Message', type: 'string' },
