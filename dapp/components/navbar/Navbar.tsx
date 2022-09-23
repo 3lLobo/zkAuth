@@ -1,6 +1,7 @@
 import { useEthers } from '@usedapp/core'
 import { useTheme } from 'next-themes'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { DropdownAccount, ToggleColorMode } from '.'
 import { ConnectWalletButton } from '..'
@@ -22,12 +23,16 @@ const Navbar = () => {
           zkAuth
         </span> */}
         {loaded ? (
-          <Image
-            src="/zkAuth.svg"
-            height={50}
-            width={100}
-            className={`filter-logo-${theme}`}
-          />
+          <Link href="/">
+            <a>
+              <Image
+                src="/zkAuth.svg"
+                height={50}
+                width={100}
+                className={`filter-logo-${theme}`}
+              />
+            </a>
+          </Link>
         ) : (
           <></>
         )}
