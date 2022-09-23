@@ -29,8 +29,10 @@ describe("check ZKOtpValidator", function () {
     let hashes = [];
 
     let poseidon;
+    let zkSocialRecoveryWallet;
     beforeEach(async function () {
         poseidon = await buildPoseidon();
+        // let hashes = [];
 
         for(var i=0; i< 2**7; i++){
             let time = startTime + i*3000;
@@ -58,9 +60,36 @@ describe("check ZKOtpValidator", function () {
 
         log(OtpMerkleTreeVerifier.address, "verifier");
 
-        ZkOtp = await ethers.getContractFactory("ZkOtpValidator");
-        zkotp = await ZkOtp.deploy(root, OtpMerkleTreeVerifier.address);
-        await zkotp.deployed();
+        // ZkOtp = await ethers.getContractFactory("ZkOtpValidator");
+        // zkotp = await ZkOtp.deploy(root, OtpMerkleTreeVerifier.address);
+        // await zkotp.deployed();
+
+        const signers = await ethers.getSigners();
+        let [user, trustee1, trustee2, trustee3, newOwner] = signers;
+        let passwords = ["123", "234", "345"];
+        let owner_pass = "678";
+        
+        let trustees = [trustee1.address, trustee2.address, trustee3.address];
+        log(trustees,"trustees");
+
+        let HashCheckVerifier = await ethers.getContractFactory("HashCheckVerifier");
+        let hashCheckVerifier = await HashCheckVerifier.deploy();
+        await hashCheckVerifier.deployed();
+        log(hashCheckVerifier.address, "hashCheckVerifier");
+
+        for(var i =0;i<trustees.length; i++){
+            hashes.push(poseidon.F.toObject(poseidon([trustees[i],BigInt(passwords[i])])) );
+        }
+
+        // log(hashes,"hashes")
+
+        let pass_hash_owner = poseidon.F.toObject(poseidon([user.address,BigInt(owner_pass)]));
+
+        let ZkSocialRecoveryWallet = await ethers.getContractFactory("ZkSocialRecoveryWallet");
+        zkSocialRecoveryWallet = await ZkSocialRecoveryWallet.deploy(hashCheckVerifier.address, pass_hash_owner, trustees, hashes, 2, root, OtpMerkleTreeVerifier.address,{gasLimit: 1e6});
+        await zkSocialRecoveryWallet.deployed();
+
+        log(zkSocialRecoveryWallet.address,"zksc addr");
 
     })
 
@@ -111,7 +140,7 @@ describe("check ZKOtpValidator", function () {
         const Input = argv.slice(8);
         log(Input, "input");
 
-        await zkotp.verifyOTP(a, b, c, Input);
+        // await zkotp.verifyOTP(a, b, c, Input);
 
     });
 })

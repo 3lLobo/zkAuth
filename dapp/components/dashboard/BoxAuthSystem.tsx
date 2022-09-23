@@ -1,6 +1,7 @@
 import { useTheme } from 'next-themes'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import { ModalChangePassword } from '.'
 
 const BoxAuthSystem = () => {
   const { theme } = useTheme()
@@ -25,9 +26,7 @@ const BoxAuthSystem = () => {
           Your 2FA System
         </div>
         <div className="text-2xl mb-5">zk-TOTP</div>
-        <button className="w-3/4 px-2 py-2 button-unsaturated">
-          Reset Passwords
-        </button>
+        <ModalChangePassword />
       </div>
 
       <div className="flex h-full col-span-4 items-center justify-center">

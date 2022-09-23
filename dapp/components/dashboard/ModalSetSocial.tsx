@@ -1,17 +1,32 @@
 import { Fragment, useEffect, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { MinusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { ethers } from 'ethers'
+import { AlchemyProvider } from '@ethersproject/providers'
 import { shortenAddress, useEthers, useResolveName } from '@usedapp/core'
 import { CheckIcon } from '@heroicons/react/20/solid'
 import { ThreeDots } from 'react-loader-spinner'
 import { useTheme } from 'next-themes'
+import { PlusIcon } from '@heroicons/react/24/solid'
 
 interface ModalSetSocialProps {}
 
 const ModalSetSocial = (props: ModalSetSocialProps) => {
   const [open, setOpen] = useState(false)
-  const { account, library: provider } = useEthers()
+  const { account } = useEthers()
+
+  // Setting Infura Provider TODO: Optimize
+  let providerIsSet = false
+  const [alchemyProvider, setInfuraProvider] = useState<
+    AlchemyProvider | undefined
+  >()
+  useEffect(() => {
+    if (!providerIsSet) {
+      const infura = new AlchemyProvider('homestead', process.env.API_KEY)
+      setInfuraProvider(infura)
+      providerIsSet = true
+    }
+  }, [providerIsSet])
 
   const onSubmit = (e: React.UIEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -25,13 +40,16 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
     [address: string]: string
     ens: string
     verified: string
+    value: string
   }
   const [accounts, setAccount] = useState<Accounts>({
     0: { address: '', ens: '', verified: '', value: '' },
     1: { address: '', ens: '', verified: '', value: '' },
     2: { address: '', ens: '', verified: '', value: '' },
   })
+  const [naccounts, setNAccounts] = useState(3)
 
+  // Sets the address when input changes value
   const setAddress = (name: string, index: string) => {
     //TODO: Extra fromatting
     if (name.includes('.')) {
@@ -59,14 +77,18 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
     }
   }
 
+  // Verifies if account address is correct. If normal address fetches ENS and viceversa. Formats input value.
   const verifyAccount = async (index: string) => {
     setAccount({
       ...accounts,
       [index]: { ...accounts[index], verified: 'loading' },
     })
-    if (provider && account) {
-      const addressfromENS = await provider.resolveName(accounts[index]['ens'])
-      console.log(addressfromENS)
+
+    if (alchemyProvider && account) {
+      // Get address from ENS if exists
+      const addressfromENS = await alchemyProvider.resolveName(
+        accounts[index]['ens']
+      )
       const isValidAccount = ethers.utils.isAddress(accounts[index]['address'])
 
       //Check that is not user's own account and not the same as others
@@ -76,6 +98,7 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
       let otherAccounts = list.map((i) => accounts[i]['address'])
       otherAccounts.push(account)
 
+      // We verify if either ENS or address are correctly set and modify states
       if (addressfromENS) {
         if (otherAccounts.includes(addressfromENS)) {
           setAccount({
@@ -104,7 +127,7 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
           })
           return
         } else {
-          const ensFromAdddress = await provider.lookupAddress(
+          const ensFromAdddress = await alchemyProvider.lookupAddress(
             accounts[index]['address']
           )
           setAccount({
@@ -130,7 +153,34 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
     }
   }
 
-  // Manage theme
+  const [allVerified, setAllVerified] = useState(false)
+  useEffect(() => {
+    const verified = []
+    for (let index in accounts) {
+      verified.push(accounts[index]['verified'] == 'verified')
+    }
+
+    setAllVerified(verified.every((v) => v === true))
+  })
+
+  const addAccount = (e: React.UIEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    setAccount({
+      ...accounts,
+      [naccounts]: { address: '', ens: '', verified: '', value: '' },
+    })
+    setNAccounts(naccounts + 1)
+  }
+
+  const removeAccount = (e: React.UIEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    const newAccounts = accounts
+    delete accounts[naccounts]
+    setAccount(newAccounts)
+    setNAccounts(naccounts - 1)
+  }
+
+  // Manage theme hydration
   const { theme } = useTheme()
   const [loaded, setLoaded] = useState(false)
   useEffect(() => {
@@ -196,7 +246,7 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
                         <h5 className="font-medium text-gray-900 dark:text-white">
                           Accounts or ENS Domains
                         </h5>
-                        {[0, 1, 2].map((index) => (
+                        {Array.from(Array(naccounts).keys()).map((index) => (
                           <div key={index}>
                             <label
                               htmlFor="text"
@@ -269,18 +319,52 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
                       </form>
                     </div>
                   </div>
+                  <div className="mt-3 flex flex-row gap-3 justify-center">
+                    <button
+                      className="dark:bg-gray-800 bg-white
+                      dark:hover:bg-gray-700 hover:bg-gray-100
+                      dark:border-gray-600 border-gray-300
+                      rounded-full border w-9 h-9"
+                      onClick={(e) => addAccount(e)}
+                    >
+                      <PlusIcon
+                        height={'1.2rem'}
+                        width={'1.2rem'}
+                        className="mx-auto"
+                      />
+                    </button>
+                    {naccounts > 3 ? (
+                      <button
+                        className="dark:bg-gray-800 bg-white
+                        dark:hover:bg-gray-700 hover:bg-gray-100
+                        dark:border-gray-600 border-gray-300
+                        rounded-full border w-9 h-9"
+                        onClick={(e) => removeAccount(e)}
+                      >
+                        <MinusIcon
+                          height={'1.2rem'}
+                          width={'1.2rem'}
+                          className="mx-auto"
+                        />
+                      </button>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+
                   <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                     <button
                       type="button"
-                      className="inline-flex w-50 ml-3 button-color"
+                      className="inline-flex w-50 ml-3 button-color disabled:opacity-25"
                       onClick={() => setOpen(false)}
+                      disabled={!allVerified}
                     >
                       Set
                     </button>
 
                     <button
                       type="button"
-                      className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+                      className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm "
                       onClick={() => setOpen(false)}
                     >
                       Close

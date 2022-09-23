@@ -1,3 +1,5 @@
+import ModalTxDetails from './ModalTxDetails'
+
 const BoxPendingTransaction = () => {
   return (
     <div
@@ -25,7 +27,7 @@ const BoxPendingTransaction = () => {
         </div>
       </div>
       <div className="col-span-3 flex flex-col items-center justify-center">
-        <button className="w-1/2 button-color">Details</button>
+        <ModalTxDetails />
       </div>
     </div>
   )

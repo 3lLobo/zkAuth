@@ -17,7 +17,6 @@ struct AuthData {
 struct Authentication {
   bool isValid;
   uint256 time;
-  address authenticatedAddress;
 }
 
 contract TotpAuthenticator is Ownable {
@@ -26,7 +25,7 @@ contract TotpAuthenticator is Ownable {
   // Maps a requestId to the requestor/validator and to the auth requested address
   mapping(uint256 => address[2]) public requests;
   // Maps a requestId to a address and its response.
-  mapping(uint256 => mapping(address => AuthData)) public responses;
+  mapping(uint256 => AuthData) public responses;
   // Maps requestId to completes authentication
   // TODO: make this private and create a function to get this value, which initially checks if the requested Id is below the current counter. Otherwise collisions can happen after reset.
   mapping(uint256 => Authentication) public completedAuth;
@@ -59,13 +58,14 @@ contract TotpAuthenticator is Ownable {
   ) public {
     // require reqId lover than count
     require(_requestId < requestCounter, 'ResuestId too high');
-    require(completedAuth[_requestId].time == 0, 'Request already authorized');
     require(
-      responses[_requestId][msg.sender].totp5 == 0,
-      'Response already submitted'
+      requests[_requestId][1] == msg.sender,
+      'This Auth requestId does not match this wallet'
     );
+    require(completedAuth[_requestId].time == 0, 'Request already authorized');
+    require(responses[_requestId].totp5 == 0, 'Response already submitted');
     AuthData memory _authData = AuthData(_totp5, _totp6hash, _time);
-    responses[_requestId][msg.sender] = _authData;
+    responses[_requestId] = _authData;
 
     emit EventAuthResponse(msg.sender, _requestId, _authData);
   }
@@ -84,26 +84,21 @@ contract TotpAuthenticator is Ownable {
 
   // @param _requestId the id of the request
   // @_responseAddress the address which submitted the valid response
-  function authenticate(
-    uint256 _requestId,
-    uint256 _lastDigit,
-    address _responseAddress
-  ) public {
+  function authenticate(uint256 _requestId, uint256 _lastDigit) public {
     // Assert that caller created the AuthRequest
     require(isValidator(_requestId), 'Validation only by requestor');
     require(
-      responses[_requestId][_responseAddress].time > 0,
+      responses[_requestId].time > 0,
       'No auth response from this wallet'
     );
 
-    AuthData memory _authData = responses[_requestId][_responseAddress];
+    AuthData memory _authData = responses[_requestId];
     bool _isValid = checkHash(_authData.totp5, _lastDigit, _authData.totp6hash);
     require(_isValid, 'On-chain validation failed');
 
     Authentication memory authentication = Authentication(
       _isValid,
-      block.timestamp,
-      _responseAddress
+      block.timestamp
     );
     completedAuth[_requestId] = authentication;
 
