@@ -1,11 +1,21 @@
 import { ArrowUturnLeftIcon } from '@heroicons/react/24/outline'
+import { useTheme } from 'next-themes'
+import { ThreeDots } from 'react-loader-spinner'
+
 import { useEthers } from '@usedapp/core'
+import { ethers } from 'ethers'
 import { useState, useRef, useEffect } from 'react'
 import { usePinInput, PinInputActions } from 'react-pin-input-hook'
 import { ModalVerifyTotp, QrCodeAuth } from './'
 
-var jsotp = require('jsotp')
-var base32 = require('thirty-two')
+import { prepareMerkleTree, generateInput } from '../../helpers/utils'
+import {
+  connectFactory,
+  connectTOTPVerifier,
+  deployZkOTPValidator,
+  deployZkWallet,
+  zkTimestampProof,
+} from '../../helpers/contracts'
 
 interface TotpSetupProps {
   setAuthType: (arg: string) => void
@@ -14,19 +24,22 @@ interface TotpSetupProps {
 const TotpSetup = (props: TotpSetupProps) => {
   const { account, library: provider } = useEthers()
 
-  // Secret State Management
-  const [secret, setSecret] = useState('')
+  // URI State Management
+  const [uri, setUri] = useState('')
   const [blur, setBlur] = useState('opacity-50 blur-sm')
-  const loadSecret = async (e: React.FormEvent<HTMLButtonElement>) => {
+  const [loading, setLoading] = useState(false)
+
+  const createTOTPWallet = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    if (provider != undefined) {
-      const signer = provider.getSigner()
-      const signature = await signer.signMessage('zkAuth') // TODO: Random Input? ZK?
-      const secretEncoded = base32
-        .encode(signature)
-        .toString()
-        .replace(/=/g, '')
-      setSecret(secretEncoded)
+    setLoading(true)
+    if (provider && account) {
+      const [URI, _, root] = await prepareMerkleTree(account)
+
+      await connectFactory(provider)
+      const otpValidator = await deployZkOTPValidator(root, provider)
+      await deployZkWallet(otpValidator, root, provider)
+
+      setUri(URI)
       setBlur('')
     }
   }
@@ -44,7 +57,7 @@ const TotpSetup = (props: TotpSetupProps) => {
     placeholder: '•',
   })
 
-  function verifyCode(e: React.FormEvent<HTMLButtonElement>) {
+  const verifyCode = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault()
     // Check if there is at least one empty field. If there is, the input is considered empty.
     if (pin.includes('')) {
@@ -53,15 +66,32 @@ const TotpSetup = (props: TotpSetupProps) => {
       // We set the focus on the first empty field if `error: true` was passed as a parameter in `options`.
       actionRef.current?.focus()
     }
-    const verifier = jsotp.TOTP(secret)
-    if (verifier.verify(pin.join(''))) {
-      setVerified(true)
-    } else {
-      setVerified(false)
+
+    if (provider && account) {
+      const totpObject = await generateInput(pin.join(''))
+      if (totpObject) {
+        await connectTOTPVerifier(provider)
+        try {
+          await zkTimestampProof(totpObject)
+          setVerified(true)
+        } catch (e) {
+          console.log(e)
+          setVerified(false)
+        }
+      }
     }
   }
 
-  if (!account) return null
+  // Manage theme hydration
+  const { theme } = useTheme()
+  const [loaded, setLoaded] = useState(false)
+  useEffect(() => {
+    if (theme) {
+      setLoaded(true)
+    }
+  })
+
+  if (!account || !loaded) return null
   return (
     <div className="relative w-full max-w-sm bg-white rounded-lg border border-gray-200 shadow-md p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
       <div className="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
@@ -80,14 +110,26 @@ const TotpSetup = (props: TotpSetupProps) => {
         </div>
         <div className="relative flex justify-center items-center">
           <div className={blur}>
-            <QrCodeAuth account={account} secret={secret} />
+            <QrCodeAuth uri={uri} />
           </div>
-          {secret == '' ? (
+          {uri == '' ? (
             <button
-              className="absolute w-1/2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              onClick={(e) => loadSecret(e)}
+              className="absolute w-1/2 h-10 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              onClick={(e) => createTOTPWallet(e)}
             >
-              Set up 2FA
+              {loading ? (
+                <div className="flex justify-center">
+                  <ThreeDots
+                    height="20"
+                    width="35"
+                    radius="9"
+                    color={theme == 'dark' ? '#ffffff' : '#3b83f6'}
+                    ariaLabel="three-dots-loading"
+                  />
+                </div>
+              ) : (
+                <div>Set up 2FA</div>
+              )}
             </button>
           ) : (
             <></>

@@ -1,31 +1,17 @@
 import { useQRCode } from 'next-qrcode'
 
-function makeURI(account: string, secret: string): string {
-  const type = 'totp'
-  const issuer = 'zkAuth' //encodeURIComponent(issuer)
-  const algorithm = 'SHA1'
-  const period = '30'
-  const digits = '6'
-
-  const uri = `otpauth://${type}/${issuer}:${account}?secret=${secret}&issuer=${issuer}&algorithm=${algorithm}&digits=${digits}&period=${period}`
-
-  return uri
-}
-
 interface QRProps {
-  account: string
-  secret: string
+  uri: string
 }
 
 const QrCodeAuth = (props: QRProps) => {
   const { Canvas } = useQRCode()
-  const URI = makeURI(props.account, props.secret)
-  console.log('URI:', URI)
+  const defaultURI = 'otpauth://totp/zkAuth:zkAuth?secret='
 
   return (
     <div className="flex justify-center">
       <Canvas
-        text={URI}
+        text={props.uri == '' ? defaultURI : props.uri}
         options={{
           type: 'image/jpeg',
           quality: 0.3,

@@ -4,23 +4,21 @@ import { buildPoseidon } from 'circomlibjs'
 import totp from 'totp-generator'
 import crypto from 'crypto-browserify'
 import base32 from 'hi-base32'
-import QRCode from 'qrcode'
-
-const uriPrefix = 'otpauth://totp/zkAuth:account?secret='
-const uriSuffix = '&issuer=zkAuth'
 
 /**
  * Prepares Merkle Tree of hashes of [time, OTP(time)] and stores it on storage
  *
  * @returns an array containing the uri of TOTP, the secret of the TOTP and the root of the merkle tree
  */
-export async function prepareMerkleTree() {
+export async function prepareMerkleTree(
+  address: string
+): Promise<[string, string, BigInt]> {
   const SECRET = prepareSecret()
-  const uri = await prepareQRCode(SECRET)
+  const uri = prepareURI(SECRET, address)
 
   const startTime = Math.floor(Date.now() / 30000 - 1) * 30000
   let poseidon = await buildPoseidon()
-  let hashes: string[] = []
+  let hashes: BigInt[] = []
   let tokens: Record<number, any> = {}
 
   for (let i = 0; i < 2 ** 7; i++) {
@@ -104,8 +102,16 @@ export async function generateInput(otp: string | number) {
   }
 }
 
-async function prepareQRCode(secret: string) {
-  return await QRCode.toDataURL(uriPrefix.concat(secret).concat(uriSuffix))
+function prepareURI(secret: string, address: string) {
+  const type = 'totp'
+  const issuer = 'zkAuth' //encodeURIComponent(issuer)
+  const algorithm = 'SHA1'
+  const period = '30'
+  const digits = '6'
+
+  const uri = `otpauth://${type}/${issuer}:${address}?secret=${secret}&issuer=${issuer}&algorithm=${algorithm}&digits=${digits}&period=${period}`
+
+  return uri
 }
 
 function prepareSecret(length = 20) {
