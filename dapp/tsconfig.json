@@ -15,6 +15,12 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "globals.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    "globals.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "helpers/circuits/witness_calculator.js"
+  ],
   "exclude": ["node_modules"]
 }

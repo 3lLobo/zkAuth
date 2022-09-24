@@ -1,4 +1,6 @@
+export * from './home'
 export * from './login'
 export * from './navbar'
 export * from './dashboard'
 export * from './layout'
+export * from './recovery'

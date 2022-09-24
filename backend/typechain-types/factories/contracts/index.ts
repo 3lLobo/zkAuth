@@ -3,4 +3,6 @@
 /* eslint-disable */
 export * as verifiers from "./Verifiers";
 export * as zkOtpValidatorSol from "./ZkOtpValidator.sol";
-export { ZkSocialRecoveryWallet__factory } from "./ZkSocialRecoveryWallet__factory";
+export * as zkSocialRecoveryWalletSol from "./ZkSocialRecoveryWallet.sol";
+export { TotpAuthenticator__factory } from "./TotpAuthenticator__factory";
+export { ZkWalletFactory__factory } from "./ZkWalletFactory__factory";
