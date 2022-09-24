@@ -7,20 +7,23 @@ contract ZkWalletFactory {
   mapping(address => address) userAddressToWalletAddress;
   event WalletCreated(address walletAddress);
 
-  constructor() {}
+  address public hashCheckVerifier;
+
+  constructor(address _hashCheckVerifier) {
+    hashCheckVerifier = _hashCheckVerifier;
+  }
 
   function deployWallet(
-    address _hashCheckVerifier,
     uint256 _ownerPasswordHash,
     address[] memory _trustees,
     uint256[] memory _passwordHashes,
     uint256 _thresholdForRecovery,
+    address _otpVerifier,
+    uint256 _root
     
-    uint256 _root,
-    address _otpVerifier
   ) external returns (address walletAddress) {
     ZkSocialRecoveryWallet wallet = new ZkSocialRecoveryWallet(
-      _hashCheckVerifier,
+      hashCheckVerifier,
       _ownerPasswordHash,
       _trustees,
       _passwordHashes,

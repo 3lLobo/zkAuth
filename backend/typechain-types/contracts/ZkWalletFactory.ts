@@ -29,26 +29,48 @@ import type {
 
 export interface ZkWalletFactoryInterface extends utils.Interface {
   functions: {
-    "deployWallet(address,uint256,address[],uint256[],uint256,uint256,address)": FunctionFragment;
+    "deployWallet(uint256,address[],uint256[],uint256,address,uint256)": FunctionFragment;
+    "getUserWalletAddress(address)": FunctionFragment;
+    "hashCheckVerifier()": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "deployWallet"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic:
+      | "deployWallet"
+      | "getUserWalletAddress"
+      | "hashCheckVerifier"
+  ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "deployWallet",
     values: [
-      PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>[],
       PromiseOrValue<BigNumberish>[],
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUserWalletAddress",
+    values: [PromiseOrValue<string>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hashCheckVerifier",
+    values?: undefined
   ): string;
 
   decodeFunctionResult(
     functionFragment: "deployWallet",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUserWalletAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "hashCheckVerifier",
     data: BytesLike
   ): Result;
 
@@ -94,39 +116,57 @@ export interface ZkWalletFactory extends BaseContract {
 
   functions: {
     deployWallet(
-      _hashCheckVerifier: PromiseOrValue<string>,
       _ownerPasswordHash: PromiseOrValue<BigNumberish>,
       _trustees: PromiseOrValue<string>[],
       _passwordHashes: PromiseOrValue<BigNumberish>[],
       _thresholdForRecovery: PromiseOrValue<BigNumberish>,
-      _root: PromiseOrValue<BigNumberish>,
       _otpVerifier: PromiseOrValue<string>,
+      _root: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    getUserWalletAddress(
+      _user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string] & { _walletAddress: string }>;
+
+    hashCheckVerifier(overrides?: CallOverrides): Promise<[string]>;
   };
 
   deployWallet(
-    _hashCheckVerifier: PromiseOrValue<string>,
     _ownerPasswordHash: PromiseOrValue<BigNumberish>,
     _trustees: PromiseOrValue<string>[],
     _passwordHashes: PromiseOrValue<BigNumberish>[],
     _thresholdForRecovery: PromiseOrValue<BigNumberish>,
-    _root: PromiseOrValue<BigNumberish>,
     _otpVerifier: PromiseOrValue<string>,
+    _root: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  getUserWalletAddress(
+    _user: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  hashCheckVerifier(overrides?: CallOverrides): Promise<string>;
+
   callStatic: {
     deployWallet(
-      _hashCheckVerifier: PromiseOrValue<string>,
       _ownerPasswordHash: PromiseOrValue<BigNumberish>,
       _trustees: PromiseOrValue<string>[],
       _passwordHashes: PromiseOrValue<BigNumberish>[],
       _thresholdForRecovery: PromiseOrValue<BigNumberish>,
-      _root: PromiseOrValue<BigNumberish>,
       _otpVerifier: PromiseOrValue<string>,
+      _root: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    getUserWalletAddress(
+      _user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    hashCheckVerifier(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
@@ -136,27 +176,39 @@ export interface ZkWalletFactory extends BaseContract {
 
   estimateGas: {
     deployWallet(
-      _hashCheckVerifier: PromiseOrValue<string>,
       _ownerPasswordHash: PromiseOrValue<BigNumberish>,
       _trustees: PromiseOrValue<string>[],
       _passwordHashes: PromiseOrValue<BigNumberish>[],
       _thresholdForRecovery: PromiseOrValue<BigNumberish>,
-      _root: PromiseOrValue<BigNumberish>,
       _otpVerifier: PromiseOrValue<string>,
+      _root: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    getUserWalletAddress(
+      _user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    hashCheckVerifier(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
     deployWallet(
-      _hashCheckVerifier: PromiseOrValue<string>,
       _ownerPasswordHash: PromiseOrValue<BigNumberish>,
       _trustees: PromiseOrValue<string>[],
       _passwordHashes: PromiseOrValue<BigNumberish>[],
       _thresholdForRecovery: PromiseOrValue<BigNumberish>,
-      _root: PromiseOrValue<BigNumberish>,
       _otpVerifier: PromiseOrValue<string>,
+      _root: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    getUserWalletAddress(
+      _user: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    hashCheckVerifier(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

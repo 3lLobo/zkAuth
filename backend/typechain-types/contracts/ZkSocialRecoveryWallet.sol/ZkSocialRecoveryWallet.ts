@@ -33,6 +33,7 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
     "currentRecoveryNumber()": FunctionFragment;
     "executeRecoveryChange(uint256[2],uint256[2][2],uint256[2],uint256[1],uint256)": FunctionFragment;
     "executeTxn(uint256[2],uint256[2][2],uint256[2],uint256[2],address,uint256)": FunctionFragment;
+    "isRecoveryOn()": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "owner()": FunctionFragment;
     "startRecovery(uint256[2],uint256[2][2],uint256[2],uint256[1],address)": FunctionFragment;
@@ -45,6 +46,7 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
       | "currentRecoveryNumber"
       | "executeRecoveryChange"
       | "executeTxn"
+      | "isRecoveryOn"
       | "onERC721Received"
       | "owner"
       | "startRecovery"
@@ -96,6 +98,10 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "isRecoveryOn",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "onERC721Received",
     values: [
       PromiseOrValue<string>,
@@ -145,6 +151,10 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "executeTxn", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "isRecoveryOn",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "onERC721Received",
     data: BytesLike
@@ -287,6 +297,8 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    isRecoveryOn(overrides?: CallOverrides): Promise<[boolean]>;
+
     onERC721Received(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -361,6 +373,8 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  isRecoveryOn(overrides?: CallOverrides): Promise<boolean>;
+
   onERC721Received(
     arg0: PromiseOrValue<string>,
     arg1: PromiseOrValue<string>,
@@ -434,6 +448,8 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       value: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    isRecoveryOn(overrides?: CallOverrides): Promise<boolean>;
 
     onERC721Received(
       arg0: PromiseOrValue<string>,
@@ -552,6 +568,8 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    isRecoveryOn(overrides?: CallOverrides): Promise<BigNumber>;
+
     onERC721Received(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -628,6 +646,8 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       value: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
+
+    isRecoveryOn(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     onERC721Received(
       arg0: PromiseOrValue<string>,
