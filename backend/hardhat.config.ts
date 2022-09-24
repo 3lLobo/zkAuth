@@ -1,13 +1,32 @@
 import { HardhatUserConfig } from 'hardhat/config'
+import 'hardhat-deploy'
+import 'hardhat-deploy-ethers'
+import '@typechain/hardhat'
+
 import '@nomicfoundation/hardhat-toolbox'
 
 const config: HardhatUserConfig = {
-  solidity: '0.8.17',
+  solidity: {
+    compilers: [
+      {
+        version: '0.8.17',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1000,
+          },
+        },
+      },
+    ],
+  },
+  namedAccounts: {
+    owner: 0,
+  },
   networks: {
     // for testnet
     'optimism-goerli': {
       url: 'https://goerli.optimism.io',
-      // accounts: [privateKey1, ]
+      //accounts: [privateKey1, ]
     },
     // for the local dev environment
     'optimism-local': {

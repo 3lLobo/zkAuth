@@ -34,7 +34,7 @@ contract ZkSocialRecoveryWallet is IERC721Receiver {
 
   mapping(uint256 => bool) usedProofs;
 
-  bool isRecoveryOn;
+  bool public isRecoveryOn;
 
   ZkOtpValidator otpVerifier;
 

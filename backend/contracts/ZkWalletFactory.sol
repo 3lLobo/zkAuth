@@ -4,7 +4,7 @@ pragma solidity ^0.8.17;
 import './ZkSocialRecoveryWallet.sol';
 
 contract ZkWalletFactory {
-  ZkSocialRecoveryWallet[] wallets;
+  mapping(address => address) userAddressToWalletAddress;
   event WalletCreated(address walletAddress);
 
   constructor() {}
@@ -28,7 +28,13 @@ contract ZkWalletFactory {
       _root,
       _otpVerifier
     );
-    wallets.push(wallet);
-    emit WalletCreated(address(wallet));
+    walletAddress = address(wallet);
+    userAddressToWalletAddress[msg.sender] = walletAddress;
+
+    emit WalletCreated(walletAddress);
+  }
+
+  function getUserWalletAddress(address _user) external view returns(address _walletAddress) {
+    _walletAddress = userAddressToWalletAddress[_user];
   }
 }
