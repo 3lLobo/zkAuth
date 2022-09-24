@@ -4,10 +4,23 @@ import { useEthers } from '@usedapp/core'
 import { useEffect } from 'react'
 import { decryptOrSignMetamask, encryptMetamask } from 'helpers/utils'
 import { useState, SetStateAction } from 'react'
+import { useCeramic } from '../hooks/useCeramic'
+import { recoverAddress } from 'ethers/lib/utils'
 
 
 function demoEncryption() {
+
+  const [ceramicAddress, setCeramicAddress] = useState()
   const { activateBrowserWallet, library } = useEthers()
+  const { ceramicData, ceramicStatus } = useCeramic(ceramicAddress)
+
+  useEffect(() => {
+    if (!ceramicAddress) {
+      setCeramicAddress("0x369551E7c1D29756e18BA4Ed7f85f2E6663e1e8d")
+    }
+    console.log("Record: ", ceramicData)
+    console.log("ceramicStatus", ceramicStatus)
+  }, [ceramicData, ceramicStatus])
 
   const topSecret = "TopSecret🔐"
   const [text, setText] = useState(topSecret)
@@ -26,7 +39,7 @@ function demoEncryption() {
 
           <button
             onClick={() => {
-              signMsg(topSecret, setText, setButtonText)
+              signMsg(topSecret, setText, setButtonText, ceramicData)
               // prepareMerkleTree()
             }
             }
@@ -46,15 +59,14 @@ function demoEncryption() {
 }
 
 // Using EPI-712 to sign the msg. https://eips.ethereum.org/EIPS/eip-712
-async function signMsg(msg, setText, setButtonText) {
-
-  var provider = new ethers.providers.Web3Provider(window.ethereum)
-  var from = await provider.listAccounts()
-  var method = 'eth_signTypedData_v4';
+async function signMsg(msg, setText, setButtonText, ceramicData) {
 
   var encMsg = await encryptMetamask(msg)
   setText(JSON.parse(encMsg).ciphertext)
   setButtonText("Decrypt")
+
+  // write data to ceramic. The {MerkleTree: string} schema is required, otherwise it will throw an error
+  ceramicData.set({ MerkleTree: encMsg })
 
   const restoredMsg = await decryptOrSignMetamask(encMsg, 'eth_decrypt')
   setText(restoredMsg)
