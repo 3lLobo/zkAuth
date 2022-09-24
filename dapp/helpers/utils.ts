@@ -14,7 +14,7 @@ const uriSuffix = '&issuer=zkAuth'
 /**
  * Prepares Merkle Tree of hashes of [time, OTP(time)] and stores it on storage
  *
- * @returns an array containing the uri of TOTP, the secret of the TOTP and the root of the merkle tree
+ * @returns an array containing the uri of TOTP, the secret of the TOTP, the root of the merkle tree and the encrypted hashes
  */
 export async function prepareMerkleTree() {
   const SECRET = prepareSecret()
@@ -56,6 +56,7 @@ export async function prepareMerkleTree() {
  * Generates inputs for on Chain OTP verification.
  *
  * @param otp - The otp entered by the user to verify
+ * @param encryptedHashes - the user specific encrypted hashes
  * @returns a formatted object ready to use with contract verification
  */
 export async function generateInput(otp: string | number, encryptedHashes: string) {
@@ -162,8 +163,6 @@ export async function encryptMetamask(data: string): Promise<string | undefined>
       method: 'eth_getEncryptionPublicKey',
       params: [from[0]],
     })
-    console.log("🚀 ~ file: utils.ts ~ line 157 ~ encryptMetamask ~ encryptionPublicKey", encryptionPublicKey, data)
-
     if (encryptionPublicKey) {
 
       const encryptedData = await encrypt(

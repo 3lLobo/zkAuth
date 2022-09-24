@@ -20,6 +20,12 @@ function demoEncryption() {
     }
     console.log("Record: ", ceramicData)
     console.log("ceramicStatus", ceramicStatus)
+
+    // @danial How to read the data
+    if (ceramicData.content) {
+      console.log("Read the hashes: ", ceramicData.content.MerkleTree)
+    }
+    
   }, [ceramicData, ceramicStatus])
 
   const topSecret = "TopSecret🔐"

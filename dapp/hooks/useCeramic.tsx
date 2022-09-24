@@ -14,7 +14,7 @@ async function connectCeramic({ address, connect, setConnecting }: { address: st
   })
 }
 
-// A hook combining login and fetching data. Gets trigered when a eth address is passed.
+// A hook combining login and fetching data. Gets triggered when a eth address is passed.
 export function useCeramic(address: string | null): {
   ceramicData: ViewerRecord<any>,
   ceramicStatus: string
