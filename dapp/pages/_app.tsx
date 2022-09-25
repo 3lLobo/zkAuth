@@ -4,18 +4,16 @@ import { Layout } from '../components'
 import { ThemeProvider } from 'next-themes'
 import { DAppProvider } from '@usedapp/core'
 
-const config = {
-  multicallAddresses: ['0x'],
-}
+const config = {}
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider attribute="class" enableSystem={false} defaultTheme="dark">
-        <DAppProvider config={config}>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
-        </DAppProvider>
+      <DAppProvider config={config}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </DAppProvider>
     </ThemeProvider>
   )
 }

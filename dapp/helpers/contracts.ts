@@ -6,36 +6,53 @@ import zkWalletFactoryJson from '../../backend/artifacts/contracts/ZkWalletFacto
 
 import ZkOtpValidatorJson from '../../backend/artifacts/contracts/ZkOtpValidator.sol/ZkOtpValidator.json'
 
+import ZkWalletJson from '../../backend/artifacts/contracts/ZkSocialRecoveryWallet.sol/ZkSocialRecoveryWallet.json'
+
 let zkWalletFactory: ethers.Contract
 let ZkOtpValidator: ethers.Contract
 
 export async function connectTOTPVerifier(
-  provider: ethers.providers.JsonRpcProvider
+  provider: ethers.providers.JsonRpcProvider,
+  account: string
 ) {
   let signer = provider.getSigner()
-  console.log('signer: ', await signer.getAddress())
+  // We connect to get wallet address
+  const ifaceFactory = new ethers.utils.Interface(zkWalletFactoryJson.abi)
 
-  ZkOtpValidator = new ethers.Contract(
-    address['OtpMerkleTreeVerifier'],
-    ZkOtpValidatorJson.abi,
+  zkWalletFactory = new ethers.Contract(
+    address['zkWalletFactory'],
+    ifaceFactory,
     signer
   )
+
+  const walletAddress = await zkWalletFactory.userAddressToWalletAddress(
+    account
+  )
+
+  // We retrieve zk totp verificator address
+  const ifaceWallet = new ethers.utils.Interface(ZkWalletJson.abi)
+
+  const zkWallet = new ethers.Contract(walletAddress, ifaceWallet, signer)
+  const zkOtpValidatorAddress = await zkWallet.otpVerifierAddress()
+
+  const iface = new ethers.utils.Interface(ZkOtpValidatorJson.abi)
+  ZkOtpValidator = new ethers.Contract(zkOtpValidatorAddress, iface, signer)
 
   console.log('Connect to zkOTP Contract:', ZkOtpValidator)
 }
 
-export async function connectFactory(
-  provider: ethers.providers.JsonRpcProvider
-) {
+export function connectFactory(provider: ethers.providers.JsonRpcProvider) {
   let signer = provider.getSigner()
-  console.log('signer: ', await signer.getAddress())
+
+  const iface = new ethers.utils.Interface(zkWalletFactoryJson.abi)
 
   zkWalletFactory = new ethers.Contract(
     address['zkWalletFactory'],
-    zkWalletFactoryJson.abi,
+    iface,
     signer
   )
   console.log('Connect to ZkWalletFactory Contract:', zkWalletFactory)
+  return zkWalletFactory
 }
 
 export async function deployZkOTPValidator(
@@ -50,18 +67,14 @@ export async function deployZkOTPValidator(
     signer
   )
 
-  const tx = await ZkOTPValidatorFactory.deploy([
+  const ZkOTPValidator = await ZkOTPValidatorFactory.deploy(
     root,
-    address['OtpMerkleTreeVerifier'],
-  ])
+    address['OtpMerkleTreeVerifier']
+  )
 
-  await tx.wait()
+  localStorage.setItem('ZkOTPValidator Address', ZkOTPValidator.address)
 
-  let deployedAddress = tx.events[0].args.newAddress
-
-  localStorage.setItem('ZkOTPValidator Address', deployedAddress)
-
-  return deployedAddress
+  return ZkOTPValidator.address
 }
 
 export async function deployZkWallet(
@@ -69,14 +82,18 @@ export async function deployZkWallet(
   root: BigInt,
   provider: ethers.providers.JsonRpcProvider
 ) {
-  await connectFactory(provider)
+  connectFactory(provider)
 
-  let tx = await zkWalletFactory.deployWallet(0, [], [], 0, otpVerifier, root)
-  await tx.wait()
+  const zkWalletFactoryContract = await zkWalletFactory.deployWallet(
+    0,
+    [],
+    [],
+    0,
+    otpVerifier,
+    root
+  )
 
-  let deployedAddress = tx.events[0].args.newAddress
-
-  return deployedAddress
+  return zkWalletFactoryContract.address
 }
 
 // export async function zkProof(input: Object) {
@@ -105,7 +122,7 @@ export async function deployZkWallet(
 // }
 
 export async function zkTimestampProof(input: Object) {
-  let calldata = await generateCalldata(input)
+  let calldata = await generateCalldata(input, 'otp_verification')
   let tx
 
   if (calldata) {

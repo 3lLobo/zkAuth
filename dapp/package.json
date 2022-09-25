@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prettier": "prettier --write . --config ../.prettierrc"
+    "prettier": "prettier --write . --config ../.prettierrc",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.1",
@@ -25,6 +26,8 @@
     "next": "12.3.0",
     "next-qrcode": "^2.2.0",
     "next-themes": "^0.2.1",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0",
     "process": "^0.11.10",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -33,7 +36,7 @@
     "react-lottie-player": "^1.4.3",
     "react-password-checklist": "^1.4.1",
     "react-pin-input-hook": "^1.0.8",
-    "snarkjs": "^0.5.0",
+    "snarkjs": "0.4.19",
     "thirty-two": "^1.0.2",
     "totp-generator": "^0.0.13",
     "web3.storage": "^4.4.0",

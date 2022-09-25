@@ -97,6 +97,7 @@ class WitnessCalculator {
 
     async _doCalculateWitness(input, sanityCheck) {
         //input is assumed to be a map from signals to arrays of bigints
+
         this.instance.exports.init((this.sanityCheck || sanityCheck) ? 1 : 0);
         const keys = Object.keys(input);
         var input_counter = 0;
@@ -165,6 +166,7 @@ class WitnessCalculator {
     async calculateWTNSBin(input, sanityCheck) {
 
         const buff32 = new Uint32Array(this.witnessSize * this.n32 + this.n32 + 11);
+
         const buff = new Uint8Array(buff32.buffer);
         await this._doCalculateWitness(input, sanityCheck);
 
@@ -275,7 +277,8 @@ function flatArray(a) {
 }
 
 function fnvHash(str) {
-    const uint64_max = BigInt(2) ** BigInt(64);
+    let uint64_max = 18446744073709551616n;
+    // let uint64_max = BigInt(2) ** BigInt(64);
     let hash = BigInt("0xCBF29CE484222325");
     for (var i = 0; i < str.length; i++) {
         hash ^= BigInt(str[i].charCodeAt());

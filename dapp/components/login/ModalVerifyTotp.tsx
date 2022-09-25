@@ -1,10 +1,13 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import { Dialog, Transition } from '@headlessui/react'
 import {
   ExclamationTriangleIcon,
   XMarkIcon,
   CheckIcon,
 } from '@heroicons/react/24/outline'
+import { ThreeDots } from 'react-loader-spinner'
+import { useTheme } from 'next-themes'
 
 interface ModalVerifyTotpProps {
   verified: boolean
@@ -12,21 +15,51 @@ interface ModalVerifyTotpProps {
 }
 
 const ModalVerifyTotp = (props: ModalVerifyTotpProps) => {
+  const router = useRouter()
   const [open, setOpen] = useState(false)
-  const onSubmit = (e: React.UIEvent<HTMLButtonElement>) => {
+  const [loading, setLoading] = useState(false)
+  const onSubmit = async (e: React.UIEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    props.verifyCode(e)
+    setLoading(true)
+    await props.verifyCode(e)
+    setLoading(false)
     setOpen(true)
   }
+
+  const goToDashboard = (e: React.UIEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    router.push('./dashboard')
+  }
+
+  // Manage theme hydration
+  const { theme } = useTheme()
+  const [loaded, setLoaded] = useState(false)
+  useEffect(() => {
+    if (theme) {
+      setLoaded(true)
+    }
+  })
 
   return (
     <>
       <button
         type="button"
-        className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        className="w-full h-10 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         onClick={(e) => onSubmit(e)}
       >
-        Verify
+        {loading ? (
+          <div className="flex justify-center">
+            <ThreeDots
+              height="20"
+              width="35"
+              radius="9"
+              color={theme == 'dark' ? '#ffffff' : '#3b83f6'}
+              ariaLabel="three-dots-loading"
+            />
+          </div>
+        ) : (
+          <div>Verify</div>
+        )}
       </button>
       <Transition.Root show={open} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={setOpen}>
@@ -107,23 +140,31 @@ const ModalVerifyTotp = (props: ModalVerifyTotpProps) => {
                   </div>
                   <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                     {props.verified === false ? (
+                      <>
+                        <button
+                          type="button"
+                          className="inline-flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-base text-center font-medium shadow-sm focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                          onClick={() => setOpen(false)}
+                        >
+                          Try Again
+                        </button>
+                        <button
+                          type="button"
+                          className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+                          onClick={() => setOpen(false)}
+                        >
+                          Close
+                        </button>
+                      </>
+                    ) : (
                       <button
                         type="button"
                         className="inline-flex w-full justify-center rounded-md border border-transparent px-4 py-2 text-base text-center font-medium shadow-sm focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                        onClick={() => setOpen(false)}
+                        onClick={(e) => goToDashboard(e)}
                       >
-                        Try Again
+                        Go to Dashboard
                       </button>
-                    ) : (
-                      <></>
                     )}
-                    <button
-                      type="button"
-                      className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
-                      onClick={() => setOpen(false)}
-                    >
-                      Close
-                    </button>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

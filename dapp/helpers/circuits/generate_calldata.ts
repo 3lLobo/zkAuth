@@ -1,10 +1,12 @@
+/* global BigInt */
+
 import { generateWitness } from './generate_witness'
 import { groth16 } from 'snarkjs'
 
-export async function generateCalldata(input: Object) {
+export async function generateCalldata(input: Object, circuit_name: string) {
   let generateWitnessSuccess = true
 
-  let witness = await generateWitness(input)
+  let witness = await generateWitness(input, circuit_name)
     .then()
     .catch((error) => {
       console.error(error)
@@ -18,7 +20,7 @@ export async function generateCalldata(input: Object) {
   }
 
   const { proof, publicSignals } = await groth16.prove(
-    'circuit_final.zkey',
+    `${circuit_name}_circuit_final.zkey`,
     witness
   )
 

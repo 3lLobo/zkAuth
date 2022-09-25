@@ -35,7 +35,7 @@ const TotpSetup = (props: TotpSetupProps) => {
     if (provider && account) {
       const [URI, _, root] = await prepareMerkleTree(account)
 
-      await connectFactory(provider)
+      connectFactory(provider)
       const otpValidator = await deployZkOTPValidator(root, provider)
       await deployZkWallet(otpValidator, root, provider)
 
@@ -70,9 +70,10 @@ const TotpSetup = (props: TotpSetupProps) => {
     if (provider && account) {
       const totpObject = await generateInput(pin.join(''))
       if (totpObject) {
-        await connectTOTPVerifier(provider)
+        connectTOTPVerifier(provider, account)
         try {
-          await zkTimestampProof(totpObject)
+          const tx = await zkTimestampProof(totpObject)
+          await tx.wait()
           setVerified(true)
         } catch (e) {
           console.log(e)

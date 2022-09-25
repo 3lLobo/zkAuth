@@ -1,7 +1,7 @@
 import wc from './witness_calculator'
 
-export async function generateWitness(input: Object) {
-  const response = await fetch('circuit.wasm')
+export async function generateWitness(input: Object, circuit_name: string) {
+  const response = await fetch(`${circuit_name}_circuit.wasm`)
   const buffer = await response.arrayBuffer()
   //console.log(buffer);
   let buff

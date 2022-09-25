@@ -1,12 +1,34 @@
 import { useEthers } from '@usedapp/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 
 import { ConnectWalletButton, TotpSetup, ZkPasswordSetup, CardChoice } from '.'
+import { connectFactory } from '../../helpers/contracts'
+import { ethers } from 'ethers'
+import { useRouter } from 'next/router'
 
 const LogInBox = () => {
   const { account, library: provider } = useEthers()
   const [authType, setAuthType] = useState('')
+  const router = useRouter()
+
+  // Load data to know if user has wallet
+  useEffect(() => {
+    const loadInfo = async () => {
+      if (provider && account) {
+        const zkWalletFactory = connectFactory(provider)
+        const walletAddress = await zkWalletFactory.userAddressToWalletAddress(
+          account
+        )
+        if (walletAddress !== ethers.constants.AddressZero) {
+          router.push('./dashboard')
+        }
+      }
+    }
+    if (provider && account) {
+      loadInfo()
+    }
+  }, [provider, account])
 
   return (
     <>

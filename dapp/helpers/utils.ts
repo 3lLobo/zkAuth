@@ -38,7 +38,7 @@ export async function prepareMerkleTree(
     k++
   }
   let root = hashes[2 ** 8 - 2]
-  console.log('Merkle root:', root)
+  console.log('Merkle root:', root, typeof root)
 
   // TODO: Replace this local storage to IPFS or Ceramic
   localStorage.setItem('OTPhashes', hashes.join(','))
@@ -51,10 +51,10 @@ export async function prepareMerkleTree(
  * @param otp - The otp entered by the user to verify
  * @returns a formatted object ready to use with contract verification
  */
-export async function generateInput(otp: string | number) {
+export async function generateInput(otp: string) {
   // TODO: Replace this local storage to IPFS or Ceramic. Optimization: Get it on local on load.
   let hashes = localStorage.getItem('OTPhashes')?.split(',').map(BigInt)
-  console.log(hashes)
+  //console.log(hashes)
 
   if (hashes) {
     let poseidon = await buildPoseidon()

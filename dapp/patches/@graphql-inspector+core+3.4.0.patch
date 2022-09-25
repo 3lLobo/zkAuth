@@ -1,0 +1,190 @@
+diff --git a/node_modules/@graphql-inspector/core/index.mjs b/node_modules/@graphql-inspector/core/index.mjs
+index d157994..c0ba5aa 100644
+--- a/node_modules/@graphql-inspector/core/index.mjs
++++ b/node_modules/@graphql-inspector/core/index.mjs
+@@ -2,7 +2,7 @@ import { __awaiter } from 'tslib';
+ import { Kind, TypeInfo, visit, visitWithTypeInfo, GraphQLError, getNamedType, isScalarType, isInterfaceType, isObjectType, isUnionType, isInputObjectType, isListType, isNonNullType, isWrappingType, isEnumType, parse, extendSchema, TokenKind, print, validate as validate$1, printType } from 'graphql';
+ import inspect from 'object-inspect';
+ import { DepGraph } from 'dependency-graph';
+-import { Parser } from 'graphql/language/parser';
++import { Parser } from 'graphql/language/parser.js';
+ 
+ function keyMap(list, keyFn) {
+     return list.reduce((map, item) => {
+@@ -1304,7 +1304,7 @@ function changesInType(oldType, newType, addChange) {
+     else if (isInterfaceType(oldType) && isInterfaceType(newType)) {
+         changesInInterface(oldType, newType, addChange);
+     }
+-    else if (isScalarType(oldType) && isScalarType(newType)) ;
++    else if (isScalarType(oldType) && isScalarType(newType));
+     else {
+         addChange(typeKindChanged(oldType, newType));
+     }
+@@ -1745,82 +1745,82 @@ function validate(schema, sources, options) {
+         // since we include fragments, validate only operations
+         .filter(doc => doc.hasOperations)
+         .forEach(doc => {
+-        const docWithOperations = {
+-            kind: Kind.DOCUMENT,
+-            definitions: doc.operations.map(d => d.node),
+-        };
+-        const extractedFragments = (extractFragments(print(docWithOperations)) || [])
+-            // resolve all nested fragments
+-            .map(fragmentName => resolveFragment(graph.getNodeData(fragmentName), graph))
+-            // flatten arrays
+-            .reduce((list, current) => list.concat(current), [])
+-            // remove duplicates
+-            .filter((def, i, all) => all.findIndex(item => item.name.value === def.name.value) === i);
+-        const merged = {
+-            kind: Kind.DOCUMENT,
+-            definitions: [...docWithOperations.definitions, ...extractedFragments],
+-        };
+-        let transformedSchema = config.apollo ? transformSchemaWithApollo(schema) : schema;
+-        const transformedDoc = config.apollo
+-            ? transformDocumentWithApollo(merged, {
+-                keepClientFields: config.keepClientFields,
+-            })
+-            : merged;
+-        const errors = validate$1(transformedSchema, transformedDoc) || [];
+-        if (config.maxDepth) {
+-            const depthError = validateQueryDepth({
+-                source: doc.source,
+-                doc: transformedDoc,
+-                maxDepth: config.maxDepth,
+-                fragmentGraph: graph,
+-            });
+-            if (depthError) {
+-                errors.push(depthError);
++            const docWithOperations = {
++                kind: Kind.DOCUMENT,
++                definitions: doc.operations.map(d => d.node),
++            };
++            const extractedFragments = (extractFragments(print(docWithOperations)) || [])
++                // resolve all nested fragments
++                .map(fragmentName => resolveFragment(graph.getNodeData(fragmentName), graph))
++                // flatten arrays
++                .reduce((list, current) => list.concat(current), [])
++                // remove duplicates
++                .filter((def, i, all) => all.findIndex(item => item.name.value === def.name.value) === i);
++            const merged = {
++                kind: Kind.DOCUMENT,
++                definitions: [...docWithOperations.definitions, ...extractedFragments],
++            };
++            let transformedSchema = config.apollo ? transformSchemaWithApollo(schema) : schema;
++            const transformedDoc = config.apollo
++                ? transformDocumentWithApollo(merged, {
++                    keepClientFields: config.keepClientFields,
++                })
++                : merged;
++            const errors = validate$1(transformedSchema, transformedDoc) || [];
++            if (config.maxDepth) {
++                const depthError = validateQueryDepth({
++                    source: doc.source,
++                    doc: transformedDoc,
++                    maxDepth: config.maxDepth,
++                    fragmentGraph: graph,
++                });
++                if (depthError) {
++                    errors.push(depthError);
++                }
+             }
+-        }
+-        if (config.maxAliasCount) {
+-            const aliasError = validateAliasCount({
+-                source: doc.source,
+-                doc: transformedDoc,
+-                maxAliasCount: config.maxAliasCount,
+-                fragmentGraph: graph,
+-            });
+-            if (aliasError) {
+-                errors.push(aliasError);
++            if (config.maxAliasCount) {
++                const aliasError = validateAliasCount({
++                    source: doc.source,
++                    doc: transformedDoc,
++                    maxAliasCount: config.maxAliasCount,
++                    fragmentGraph: graph,
++                });
++                if (aliasError) {
++                    errors.push(aliasError);
++                }
+             }
+-        }
+-        if (config.maxDirectiveCount) {
+-            const directiveError = validateDirectiveCount({
+-                source: doc.source,
+-                doc: transformedDoc,
+-                maxDirectiveCount: config.maxDirectiveCount,
+-                fragmentGraph: graph,
+-            });
+-            if (directiveError) {
+-                errors.push(directiveError);
++            if (config.maxDirectiveCount) {
++                const directiveError = validateDirectiveCount({
++                    source: doc.source,
++                    doc: transformedDoc,
++                    maxDirectiveCount: config.maxDirectiveCount,
++                    fragmentGraph: graph,
++                });
++                if (directiveError) {
++                    errors.push(directiveError);
++                }
+             }
+-        }
+-        if (config.maxTokenCount) {
+-            const tokenCountError = validateTokenCount({
+-                source: doc.source,
+-                document: transformedDoc,
+-                maxTokenCount: config.maxTokenCount,
+-                getReferencedFragmentSource: fragmentName => print(graph.getNodeData(fragmentName)),
+-            });
+-            if (tokenCountError) {
+-                errors.push(tokenCountError);
++            if (config.maxTokenCount) {
++                const tokenCountError = validateTokenCount({
++                    source: doc.source,
++                    document: transformedDoc,
++                    maxTokenCount: config.maxTokenCount,
++                    getReferencedFragmentSource: fragmentName => print(graph.getNodeData(fragmentName)),
++                });
++                if (tokenCountError) {
++                    errors.push(tokenCountError);
++                }
+             }
+-        }
+-        const deprecated = config.strictDeprecated ? findDeprecatedUsages(transformedSchema, transformedDoc) : [];
+-        const duplicatedFragments = config.strictFragments ? findDuplicatedFragments(fragmentNames) : [];
+-        if (sumLengths(errors, duplicatedFragments, deprecated) > 0) {
+-            invalidDocuments.push({
+-                source: doc.source,
+-                errors: [...errors, ...duplicatedFragments],
+-                deprecated,
+-            });
+-        }
+-    });
++            const deprecated = config.strictDeprecated ? findDeprecatedUsages(transformedSchema, transformedDoc) : [];
++            const duplicatedFragments = config.strictFragments ? findDuplicatedFragments(fragmentNames) : [];
++            if (sumLengths(errors, duplicatedFragments, deprecated) > 0) {
++                invalidDocuments.push({
++                    source: doc.source,
++                    errors: [...errors, ...duplicatedFragments],
++                    deprecated,
++                });
++            }
++        });
+     return invalidDocuments;
+ }
+ function findDuplicatedFragments(fragmentNames) {
+@@ -1849,9 +1849,9 @@ function similar(schema, typeName, threshold = 0.4) {
+     const targets = Object.keys(schema.getTypeMap())
+         .filter(name => !isPrimitive(name) && !isForIntrospection(name))
+         .map(name => ({
+-        typeId: name,
+-        value: stripType(typeMap[name]),
+-    }));
++            typeId: name,
++            value: stripType(typeMap[name]),
++        }));
+     const results = {};
+     if (typeof typeName !== 'undefined' && !targets.some(t => t.typeId === typeName)) {
+         throw new Error(`Type '${typeName}' doesn't exist`);
