@@ -44,70 +44,30 @@ const TotpSetup = (props: TotpSetupProps) => {
   })
 
   // Manage ceramic connection
-  const [addressCeramic, setAddressCeramic] = useState<string | null>(null)
-  const { ceramicData, ceramicStatus } = useCeramic(addressCeramic)
+  const { ceramicData, ceramicStatus } = useCeramic(account ? account : null)
 
   // Create Wallet
-  useEffect(() => {
-    const createWallet = async () => {
-      if (ceramicData && ceramicData.set && provider && account) {
-        const tree = await prepareMerkleTree(account)
-
-        if (tree) {
-          const [URI, _, root, encrypted] = tree
-          ceramicData.set({ MerkleTree: encrypted })
-          connectFactory(provider)
-          const otpValidator = await deployZkOTPValidator(root, provider)
-          await deployZkWallet(otpValidator, root, provider)
-
-          setUri(URI)
-          setBlur('')
-        } else {
-          console.log('CONNECTION ERROR')
-        }
-      }
-    }
-    if (ceramicStatus == 'connected' && provider && account) {
-      createWallet()
-    }
-  }, [ceramicStatus, ceramicData, provider, account])
-
   const createTOTPWallet = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault()
     setLoading(true)
-    if (account) {
-      setAddressCeramic(account)
-    }
-  }
 
-  useEffect(() => {
-    const zkProof = async () => {
-      if (ceramicData && ceramicData.content && provider && account) {
-        console.log('Read the hashes: ', ceramicData.content.MerkleTree)
-        const encryptedHashes = ceramicData.content.MerkleTree
-        const totpObject = await generateInput(pin.join(''), encryptedHashes)
-        if (totpObject) {
-          connectTOTPVerifier(provider, account)
-          try {
-            const tx = await zkTimestampProof(totpObject)
-            await tx.wait()
-            setVerified(true)
-          } catch (e) {
-            console.log(e)
-            setVerified(false)
-          }
-        }
+    if (ceramicData && ceramicData.set && provider && account) {
+      const tree = await prepareMerkleTree(account)
+
+      if (tree) {
+        const [URI, _, root, encrypted] = tree
+        ceramicData.set({ MerkleTree: encrypted })
+        connectFactory(provider)
+        const otpValidator = await deployZkOTPValidator(root, provider)
+        await deployZkWallet(otpValidator, root, provider)
+
+        setUri(URI)
+        setBlur('')
+      } else {
+        console.log('CONNECTION ERROR')
       }
     }
-    if (
-      ceramicStatus == 'connected' &&
-      ceramicData.content.MerkleTree &&
-      provider &&
-      account
-    ) {
-      zkProof()
-    }
-  }, [ceramicStatus, ceramicData, provider, account])
+  }
 
   const verifyCode = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -119,8 +79,21 @@ const TotpSetup = (props: TotpSetupProps) => {
       actionRef.current?.focus()
       return
     }
-    if (account) {
-      setAddressCeramic(account)
+    if (ceramicData && ceramicData.content && provider && account) {
+      console.log('Read the hashes: ', ceramicData.content.MerkleTree)
+      const encryptedHashes = ceramicData.content.MerkleTree
+      const totpObject = await generateInput(pin.join(''), encryptedHashes)
+      if (totpObject) {
+        connectTOTPVerifier(provider, account)
+        try {
+          const tx = await zkTimestampProof(totpObject)
+          await tx.wait()
+          setVerified(true)
+        } catch (e) {
+          console.log(e)
+          setVerified(false)
+        }
+      }
     }
   }
 

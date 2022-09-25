@@ -16,12 +16,15 @@ const LogInBox = () => {
   useEffect(() => {
     const loadInfo = async () => {
       if (provider && account) {
-        const zkWalletFactory = connectFactory(provider)
-        const walletAddress = await zkWalletFactory.userAddressToWalletAddress(
-          account
-        )
-        if (walletAddress !== ethers.constants.AddressZero) {
-          router.push('./dashboard')
+        try {
+          const zkWalletFactory = connectFactory(provider)
+          const walletAddress =
+            await zkWalletFactory.userAddressToWalletAddress(account)
+          if (walletAddress !== ethers.constants.AddressZero) {
+            router.push('./dashboard')
+          }
+        } catch (e) {
+          console.log(e)
         }
       }
     }
