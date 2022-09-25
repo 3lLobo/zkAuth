@@ -36,6 +36,7 @@ contract ZkSocialRecoveryWallet is IERC721Receiver {
 
   bool public isRecoveryOn;
 
+  address public otpVerifierAddress;
   ZkOtpValidator otpVerifier;
 
   struct RecoveryProcedure {
@@ -130,6 +131,8 @@ contract ZkSocialRecoveryWallet is IERC721Receiver {
     }
 
     thresholdForRecovery = _thresholdForRecovery;
+
+    otpVerifierAddress = _otpVerifier;
 
     otpVerifier = new ZkOtpValidator(_root, _otpVerifier);
   }

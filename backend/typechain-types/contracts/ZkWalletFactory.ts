@@ -32,6 +32,7 @@ export interface ZkWalletFactoryInterface extends utils.Interface {
     "deployWallet(uint256,address[],uint256[],uint256,address,uint256)": FunctionFragment;
     "getUserWalletAddress(address)": FunctionFragment;
     "hashCheckVerifier()": FunctionFragment;
+    "userAddressToWalletAddress(address)": FunctionFragment;
   };
 
   getFunction(
@@ -39,6 +40,7 @@ export interface ZkWalletFactoryInterface extends utils.Interface {
       | "deployWallet"
       | "getUserWalletAddress"
       | "hashCheckVerifier"
+      | "userAddressToWalletAddress"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -60,6 +62,10 @@ export interface ZkWalletFactoryInterface extends utils.Interface {
     functionFragment: "hashCheckVerifier",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "userAddressToWalletAddress",
+    values: [PromiseOrValue<string>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "deployWallet",
@@ -71,6 +77,10 @@ export interface ZkWalletFactoryInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "hashCheckVerifier",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "userAddressToWalletAddress",
     data: BytesLike
   ): Result;
 
@@ -131,6 +141,11 @@ export interface ZkWalletFactory extends BaseContract {
     ): Promise<[string] & { _walletAddress: string }>;
 
     hashCheckVerifier(overrides?: CallOverrides): Promise<[string]>;
+
+    userAddressToWalletAddress(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
   };
 
   deployWallet(
@@ -150,6 +165,11 @@ export interface ZkWalletFactory extends BaseContract {
 
   hashCheckVerifier(overrides?: CallOverrides): Promise<string>;
 
+  userAddressToWalletAddress(
+    arg0: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
   callStatic: {
     deployWallet(
       _ownerPasswordHash: PromiseOrValue<BigNumberish>,
@@ -167,6 +187,11 @@ export interface ZkWalletFactory extends BaseContract {
     ): Promise<string>;
 
     hashCheckVerifier(overrides?: CallOverrides): Promise<string>;
+
+    userAddressToWalletAddress(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<string>;
   };
 
   filters: {
@@ -191,6 +216,11 @@ export interface ZkWalletFactory extends BaseContract {
     ): Promise<BigNumber>;
 
     hashCheckVerifier(overrides?: CallOverrides): Promise<BigNumber>;
+
+    userAddressToWalletAddress(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -210,5 +240,10 @@ export interface ZkWalletFactory extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     hashCheckVerifier(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    userAddressToWalletAddress(
+      arg0: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }

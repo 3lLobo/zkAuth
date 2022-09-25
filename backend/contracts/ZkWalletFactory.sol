@@ -4,7 +4,7 @@ pragma solidity ^0.8.17;
 import './ZkSocialRecoveryWallet.sol';
 
 contract ZkWalletFactory {
-  mapping(address => address) userAddressToWalletAddress;
+  mapping(address => address) public userAddressToWalletAddress;
   event WalletCreated(address walletAddress);
 
   address public hashCheckVerifier;

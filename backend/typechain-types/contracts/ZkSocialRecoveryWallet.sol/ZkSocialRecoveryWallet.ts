@@ -35,6 +35,7 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
     "executeTxn(uint256[2],uint256[2][2],uint256[2],uint256[2],address,uint256)": FunctionFragment;
     "isRecoveryOn()": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
+    "otpVerifierAddress()": FunctionFragment;
     "owner()": FunctionFragment;
     "startRecovery(uint256[2],uint256[2][2],uint256[2],uint256[1],address)": FunctionFragment;
     "voteInRecovery(uint256[2],uint256[2][2],uint256[2],uint256[1],uint256)": FunctionFragment;
@@ -48,6 +49,7 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
       | "executeTxn"
       | "isRecoveryOn"
       | "onERC721Received"
+      | "otpVerifierAddress"
       | "owner"
       | "startRecovery"
       | "voteInRecovery"
@@ -110,6 +112,10 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
       PromiseOrValue<BytesLike>
     ]
   ): string;
+  encodeFunctionData(
+    functionFragment: "otpVerifierAddress",
+    values?: undefined
+  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "startRecovery",
@@ -157,6 +163,10 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "onERC721Received",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "otpVerifierAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -307,6 +317,8 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
+    otpVerifierAddress(overrides?: CallOverrides): Promise<[string]>;
+
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     startRecovery(
@@ -383,6 +395,8 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
+  otpVerifierAddress(overrides?: CallOverrides): Promise<string>;
+
   owner(overrides?: CallOverrides): Promise<string>;
 
   startRecovery(
@@ -458,6 +472,8 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       arg3: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
+
+    otpVerifierAddress(overrides?: CallOverrides): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
 
@@ -578,6 +594,8 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    otpVerifierAddress(overrides?: CallOverrides): Promise<BigNumber>;
+
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     startRecovery(
@@ -654,6 +672,10 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       arg1: PromiseOrValue<string>,
       arg2: PromiseOrValue<BigNumberish>,
       arg3: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    otpVerifierAddress(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
