@@ -85,7 +85,7 @@ const ModalChangePassword = () => {
         className="w-3/4 px-2 py-2 button-unsaturated"
         onClick={(e) => onSubmit(e)}
       >
-        Set Accounts
+        Reset Password
       </button>
       <Transition.Root show={open} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={setOpen}>

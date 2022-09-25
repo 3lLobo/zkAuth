@@ -29,32 +29,44 @@ import type {
 
 export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
   functions: {
+    "Trustees(uint256)": FunctionFragment;
     "cancelRecovery(uint256[2],uint256[2][2],uint256[2],uint256[1],uint256)": FunctionFragment;
     "currentRecoveryNumber()": FunctionFragment;
     "executeRecoveryChange(uint256[2],uint256[2][2],uint256[2],uint256[1],uint256)": FunctionFragment;
     "executeTxn(uint256[2],uint256[2][2],uint256[2],uint256[2],address,uint256)": FunctionFragment;
     "isRecoveryOn()": FunctionFragment;
+    "numberTrustees()": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
     "otpVerifierAddress()": FunctionFragment;
     "owner()": FunctionFragment;
+    "setTrustees(address[])": FunctionFragment;
+    "setTrusteesPasswords(uint256[])": FunctionFragment;
     "startRecovery(uint256[2],uint256[2][2],uint256[2],uint256[1],address)": FunctionFragment;
     "voteInRecovery(uint256[2],uint256[2][2],uint256[2],uint256[1],uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "Trustees"
       | "cancelRecovery"
       | "currentRecoveryNumber"
       | "executeRecoveryChange"
       | "executeTxn"
       | "isRecoveryOn"
+      | "numberTrustees"
       | "onERC721Received"
       | "otpVerifierAddress"
       | "owner"
+      | "setTrustees"
+      | "setTrusteesPasswords"
       | "startRecovery"
       | "voteInRecovery"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "Trustees",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
   encodeFunctionData(
     functionFragment: "cancelRecovery",
     values: [
@@ -104,6 +116,10 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "numberTrustees",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "onERC721Received",
     values: [
       PromiseOrValue<string>,
@@ -117,6 +133,14 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "setTrustees",
+    values: [PromiseOrValue<string>[]]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTrusteesPasswords",
+    values: [PromiseOrValue<BigNumberish>[]]
+  ): string;
   encodeFunctionData(
     functionFragment: "startRecovery",
     values: [
@@ -144,6 +168,7 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
     ]
   ): string;
 
+  decodeFunctionResult(functionFragment: "Trustees", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "cancelRecovery",
     data: BytesLike
@@ -162,6 +187,10 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "numberTrustees",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "onERC721Received",
     data: BytesLike
   ): Result;
@@ -170,6 +199,14 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "setTrustees",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTrusteesPasswords",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "startRecovery",
     data: BytesLike
@@ -268,6 +305,11 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    Trustees(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<[string]>;
+
     cancelRecovery(
       a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
       b: [
@@ -309,6 +351,8 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
 
     isRecoveryOn(overrides?: CallOverrides): Promise<[boolean]>;
 
+    numberTrustees(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     onERC721Received(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -320,6 +364,16 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
     otpVerifierAddress(overrides?: CallOverrides): Promise<[string]>;
 
     owner(overrides?: CallOverrides): Promise<[string]>;
+
+    setTrustees(
+      _trustees: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setTrusteesPasswords(
+      _passwordHashes: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
 
     startRecovery(
       a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
@@ -345,6 +399,11 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
+
+  Trustees(
+    arg0: PromiseOrValue<BigNumberish>,
+    overrides?: CallOverrides
+  ): Promise<string>;
 
   cancelRecovery(
     a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
@@ -387,6 +446,8 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
 
   isRecoveryOn(overrides?: CallOverrides): Promise<boolean>;
 
+  numberTrustees(overrides?: CallOverrides): Promise<BigNumber>;
+
   onERC721Received(
     arg0: PromiseOrValue<string>,
     arg1: PromiseOrValue<string>,
@@ -398,6 +459,16 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
   otpVerifierAddress(overrides?: CallOverrides): Promise<string>;
 
   owner(overrides?: CallOverrides): Promise<string>;
+
+  setTrustees(
+    _trustees: PromiseOrValue<string>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setTrusteesPasswords(
+    _passwordHashes: PromiseOrValue<BigNumberish>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
 
   startRecovery(
     a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
@@ -424,6 +495,11 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    Trustees(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
     cancelRecovery(
       a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
       b: [
@@ -465,6 +541,8 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
 
     isRecoveryOn(overrides?: CallOverrides): Promise<boolean>;
 
+    numberTrustees(overrides?: CallOverrides): Promise<BigNumber>;
+
     onERC721Received(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -476,6 +554,16 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
     otpVerifierAddress(overrides?: CallOverrides): Promise<string>;
 
     owner(overrides?: CallOverrides): Promise<string>;
+
+    setTrustees(
+      _trustees: PromiseOrValue<string>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setTrusteesPasswords(
+      _passwordHashes: PromiseOrValue<BigNumberish>[],
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     startRecovery(
       a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
@@ -545,6 +633,11 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
   };
 
   estimateGas: {
+    Trustees(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     cancelRecovery(
       a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
       b: [
@@ -586,6 +679,8 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
 
     isRecoveryOn(overrides?: CallOverrides): Promise<BigNumber>;
 
+    numberTrustees(overrides?: CallOverrides): Promise<BigNumber>;
+
     onERC721Received(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -597,6 +692,16 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
     otpVerifierAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setTrustees(
+      _trustees: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setTrusteesPasswords(
+      _passwordHashes: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
 
     startRecovery(
       a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
@@ -624,6 +729,11 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
   };
 
   populateTransaction: {
+    Trustees(
+      arg0: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     cancelRecovery(
       a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
       b: [
@@ -667,6 +777,8 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
 
     isRecoveryOn(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    numberTrustees(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     onERC721Received(
       arg0: PromiseOrValue<string>,
       arg1: PromiseOrValue<string>,
@@ -680,6 +792,16 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setTrustees(
+      _trustees: PromiseOrValue<string>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setTrusteesPasswords(
+      _passwordHashes: PromiseOrValue<BigNumberish>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
 
     startRecovery(
       a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],

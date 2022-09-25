@@ -25,6 +25,9 @@ contract ZkSocialRecoveryWallet is IERC721Receiver {
   uint256 private thresholdForRecovery;
 
   uint256 public currentRecoveryNumber;
+  //to retrieve in frontend
+  uint256 public numberTrustees;
+  address[] public Trustees;
 
   mapping(address => bool) Trustee;
 
@@ -104,37 +107,40 @@ contract ZkSocialRecoveryWallet is IERC721Receiver {
   constructor(
     address _hashCheckVerifier,
     uint256 _ownerPasswordHash,
-    address[] memory _trustees,
-    uint256[] memory _passwordHashes,
     uint256 _thresholdForRecovery,
     uint256 _root,
     address _otpVerifier
   ) {
     require(_hashCheckVerifier != address(0), 'Zero address verifier');
-    require(
-      _trustees.length == _passwordHashes.length,
-      'Trustees and hashes length diff'
-    );
-    require(
-      _trustees.length >= _thresholdForRecovery,
-      'Threshold is greater than number of trustees'
-    );
 
     hashCheckVerifier = _hashCheckVerifier;
     owner = msg.sender;
     ownerPasswordHash = _ownerPasswordHash;
+    
+    thresholdForRecovery = _thresholdForRecovery;
+    otpVerifierAddress = _otpVerifier;
+    otpVerifier = new ZkOtpValidator(_root, _otpVerifier);
+  }
 
-    for (uint256 i = 0; i < _trustees.length; i++) {
+  // To set trustees after deployment
+  function setTrustees(address[] memory _trustees) external isOwner {
+      for (uint256 i = 0; i < _trustees.length; i++) {
       require(!Trustee[_trustees[i]], 'Duplicate trustee in list');
       Trustee[_trustees[i]] = true;
-      trusteeToPasswordHash[_trustees[i]] = _passwordHashes[i];
     }
-
-    thresholdForRecovery = _thresholdForRecovery;
-
-    otpVerifierAddress = _otpVerifier;
-
-    otpVerifier = new ZkOtpValidator(_root, _otpVerifier);
+    Trustees = _trustees;
+    numberTrustees = _trustees.length;
+    }
+    
+  // Set trustees password after deployment
+function setTrusteesPasswords(uint256[] memory _passwordHashes) external isOwner {
+    require(
+      Trustees.length == _passwordHashes.length,
+      'Trustees and hashes length diff'
+    );
+    for (uint256 i = 0; i < Trustees.length; i++) {
+      trusteeToPasswordHash[Trustees[i]] = _passwordHashes[i];
+    }
   }
 
   function startRecovery(

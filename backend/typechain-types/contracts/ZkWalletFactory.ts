@@ -29,7 +29,7 @@ import type {
 
 export interface ZkWalletFactoryInterface extends utils.Interface {
   functions: {
-    "deployWallet(uint256,address[],uint256[],uint256,address,uint256)": FunctionFragment;
+    "deployWallet(uint256,uint256,address,uint256)": FunctionFragment;
     "getUserWalletAddress(address)": FunctionFragment;
     "hashCheckVerifier()": FunctionFragment;
     "userAddressToWalletAddress(address)": FunctionFragment;
@@ -47,8 +47,6 @@ export interface ZkWalletFactoryInterface extends utils.Interface {
     functionFragment: "deployWallet",
     values: [
       PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>[],
-      PromiseOrValue<BigNumberish>[],
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
       PromiseOrValue<BigNumberish>
@@ -127,8 +125,6 @@ export interface ZkWalletFactory extends BaseContract {
   functions: {
     deployWallet(
       _ownerPasswordHash: PromiseOrValue<BigNumberish>,
-      _trustees: PromiseOrValue<string>[],
-      _passwordHashes: PromiseOrValue<BigNumberish>[],
       _thresholdForRecovery: PromiseOrValue<BigNumberish>,
       _otpVerifier: PromiseOrValue<string>,
       _root: PromiseOrValue<BigNumberish>,
@@ -150,8 +146,6 @@ export interface ZkWalletFactory extends BaseContract {
 
   deployWallet(
     _ownerPasswordHash: PromiseOrValue<BigNumberish>,
-    _trustees: PromiseOrValue<string>[],
-    _passwordHashes: PromiseOrValue<BigNumberish>[],
     _thresholdForRecovery: PromiseOrValue<BigNumberish>,
     _otpVerifier: PromiseOrValue<string>,
     _root: PromiseOrValue<BigNumberish>,
@@ -173,8 +167,6 @@ export interface ZkWalletFactory extends BaseContract {
   callStatic: {
     deployWallet(
       _ownerPasswordHash: PromiseOrValue<BigNumberish>,
-      _trustees: PromiseOrValue<string>[],
-      _passwordHashes: PromiseOrValue<BigNumberish>[],
       _thresholdForRecovery: PromiseOrValue<BigNumberish>,
       _otpVerifier: PromiseOrValue<string>,
       _root: PromiseOrValue<BigNumberish>,
@@ -202,8 +194,6 @@ export interface ZkWalletFactory extends BaseContract {
   estimateGas: {
     deployWallet(
       _ownerPasswordHash: PromiseOrValue<BigNumberish>,
-      _trustees: PromiseOrValue<string>[],
-      _passwordHashes: PromiseOrValue<BigNumberish>[],
       _thresholdForRecovery: PromiseOrValue<BigNumberish>,
       _otpVerifier: PromiseOrValue<string>,
       _root: PromiseOrValue<BigNumberish>,
@@ -226,8 +216,6 @@ export interface ZkWalletFactory extends BaseContract {
   populateTransaction: {
     deployWallet(
       _ownerPasswordHash: PromiseOrValue<BigNumberish>,
-      _trustees: PromiseOrValue<string>[],
-      _passwordHashes: PromiseOrValue<BigNumberish>[],
       _thresholdForRecovery: PromiseOrValue<BigNumberish>,
       _otpVerifier: PromiseOrValue<string>,
       _root: PromiseOrValue<BigNumberish>,

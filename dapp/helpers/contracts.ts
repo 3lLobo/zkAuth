@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import { address } from '../../backend/config'
 import { generateCalldata } from './circuits/generate_calldata'
+import { buildPoseidon } from 'circomlibjs'
 
 import zkWalletFactoryJson from '../../backend/artifacts/contracts/ZkWalletFactory.sol/ZkWalletFactory.json'
 
@@ -10,6 +11,7 @@ import ZkWalletJson from '../../backend/artifacts/contracts/ZkSocialRecoveryWall
 
 let zkWalletFactory: ethers.Contract
 let ZkOtpValidator: ethers.Contract
+let ZkWallet: ethers.Contract
 
 export async function connectTOTPVerifier(
   provider: ethers.providers.JsonRpcProvider,
@@ -86,14 +88,25 @@ export async function deployZkWallet(
 
   const zkWalletFactoryContract = await zkWalletFactory.deployWallet(
     0,
-    [],
-    [],
     0,
     otpVerifier,
     root
   )
 
   return zkWalletFactoryContract.address
+}
+
+export function connectZkWallet(
+  provider: ethers.providers.JsonRpcProvider,
+  walletAddress: string
+) {
+  let signer = provider.getSigner()
+
+  const iface = new ethers.utils.Interface(ZkWalletJson.abi)
+
+  ZkWallet = new ethers.Contract(walletAddress, iface, signer)
+  console.log('Connect to ZkWallet Contract:', ZkWallet)
+  return ZkWallet
 }
 
 // export async function zkProof(input: Object) {
@@ -147,4 +160,30 @@ export async function zkTimestampProof(input: Object) {
     throw new Error('Witness generation failed.')
   }
   return tx
+}
+
+export async function setSocialRecovery(
+  provider: ethers.providers.JsonRpcProvider,
+  accounts: string[]
+) {
+  const signer = provider.getSigner()
+  const zkWalletContract = ZkWallet.connect(signer)
+  await zkWalletContract.setTrustees(accounts)
+}
+
+export async function initiateSocialRecovery(
+  provider: ethers.providers.JsonRpcProvider,
+  passwords: string[]
+) {
+  const signer = provider.getSigner()
+  const zkWalletContract = ZkWallet.connect(signer)
+  let hashes: string[] = []
+
+  let poseidon = await buildPoseidon()
+  for (let password in passwords) {
+    const hash = poseidon.F.toObject(poseidon(password))
+    hashes.push(hash)
+  }
+
+  await zkWalletContract.setTrusteesPasswords(hashes)
 }

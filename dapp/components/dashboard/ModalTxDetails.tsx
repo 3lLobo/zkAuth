@@ -7,6 +7,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { ethers } from 'ethers'
 import { useResolveName } from '@usedapp/core'
+import PasswordTOTPBox from './PasswordTOTPBox'
 
 interface ModalTxDetailsProps {}
 
@@ -123,6 +124,11 @@ const ModalTxDetails = (props: ModalTxDetailsProps) => {
                       </div>
                     </div>
                   </div>
+                  <div>
+                    {/* // TODO FLORIAN */}
+                    <PasswordTOTPBox setOpen={setOpen} allVerified={false} />
+                  </div>
+
                   <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                     <button
                       type="button"

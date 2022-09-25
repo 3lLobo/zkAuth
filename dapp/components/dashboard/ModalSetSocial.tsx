@@ -10,7 +10,9 @@ import { useTheme } from 'next-themes'
 import { PlusIcon } from '@heroicons/react/24/solid'
 import { PasswordTOTPBox, PasswordZKBox } from '.'
 
-interface ModalSetSocialProps {}
+interface ModalSetSocialProps {
+  enabled: boolean
+}
 
 const ModalSetSocial = (props: ModalSetSocialProps) => {
   const [open, setOpen] = useState(false)
@@ -193,12 +195,16 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
 
   return (
     <>
-      <button
-        className="w-3/4 px-2 py-2 button-unsaturated"
-        onClick={(e) => onSubmit(e)}
-      >
-        Set Accounts
-      </button>
+      {props.enabled ? (
+        <button
+          className="w-3/4 px-2 py-2 button-unsaturated"
+          onClick={(e) => onSubmit(e)}
+        >
+          Set Accounts
+        </button>
+      ) : (
+        <></>
+      )}
       <Transition.Root show={open} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={setOpen}>
           <Transition.Child
@@ -354,7 +360,7 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
                           id="password"
                           className="w-full mt-3 flex flex-row gap-3 justify-center"
                         >
-                          {false ? (
+                          {true ? (
                             <PasswordTOTPBox
                               setOpen={setOpen}
                               allVerified={allVerified}
