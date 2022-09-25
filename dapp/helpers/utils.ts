@@ -45,7 +45,7 @@ export async function prepareMerkleTree(
 
   // TODO: Replace this local storage to IPFS or Ceramic
   const encryptedHashes = await encryptMetamask(hashes.join(','))
-  // localStorage.setItem('OTPhashes', hashes.join(','))
+  localStorage.setItem('OTPhashes', hashes.join(','))
 
   if (encryptedHashes) {
     return [uri, SECRET, root, encryptedHashes]
@@ -63,20 +63,26 @@ export async function generateInput(
   otp: string | number,
   encryptedHashes: string
 ) {
-  // let hashes = localStorage.getItem('OTPhashes')?.split(',').map(BigInt)
+  let hashes = localStorage.getItem('OTPhashes')?.split(',').map(BigInt)
   // console.log(hashes)
-  const hashes = await decryptOrSignMetamask(encryptedHashes, 'eth_decrypt')
+  const hashesString = await decryptOrSignMetamask(encryptedHashes, 'eth_decrypt')
+  // const hashes = hashesString.split(',').map(BigInt) 
 
   if (hashes) {
+
     let poseidon = await buildPoseidon()
 
-    let currentTime = Math.floor(Date.now() / 30000) * 30000
+    let currentTime = Math.floor((Date.now() - 5000) / 30000) * 30000 // 3lLobo: Gave it a 5sec backwards buffer
 
     let currentNode = poseidon.F.toObject(
       poseidon([BigInt(currentTime), BigInt(otp)])
     )
-    //console.log(currentNode);
-
+    /* Debugging logs for later:
+    // console.log("Hashes length: ", hashes.length); // 255
+    // console.log("Hashes: ", hashes); // 255
+    // console.log("currentNode: ", Number.parseInt(currentNode)) // 1.9353502285454398e+76
+    // console.log("Index Of: ", hashes.indexOf(currentNode))
+    */
     if (hashes.indexOf(currentNode) < 0) {
       throw new Error('Invalid OTP.')
     }
