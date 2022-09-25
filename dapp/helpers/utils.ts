@@ -14,7 +14,7 @@ import { encrypt, EthEncryptedData } from 'eth-sig-util'
  */
 export async function prepareMerkleTree(
   address: string
-): Promise<[string, string, BigInt]> {
+): Promise<[string, string, BigInt, string] | undefined> {
   const SECRET = prepareSecret()
   const uri = prepareURI(SECRET, address)
 
@@ -44,10 +44,12 @@ export async function prepareMerkleTree(
   // console.table("hashes", hashes)
 
   // TODO: Replace this local storage to IPFS or Ceramic
-  const encryptedHashes = encryptMetamask(hashes.join(','))
+  const encryptedHashes = await encryptMetamask(hashes.join(','))
   // localStorage.setItem('OTPhashes', hashes.join(','))
 
-  return [uri, SECRET, root, encryptedHashes]
+  if (encryptedHashes) {
+    return [uri, SECRET, root, encryptedHashes]
+  }
 }
 
 /**

@@ -16,6 +16,7 @@ import {
   deployZkWallet,
   zkTimestampProof,
 } from '../../helpers/contracts'
+import { useCeramic } from '../../hooks/useCeramic'
 
 interface TotpSetupProps {
   setAuthType: (arg: string) => void
@@ -28,21 +29,6 @@ const TotpSetup = (props: TotpSetupProps) => {
   const [uri, setUri] = useState('')
   const [blur, setBlur] = useState('opacity-50 blur-sm')
   const [loading, setLoading] = useState(false)
-
-  const createTOTPWallet = async (e: React.FormEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-    setLoading(true)
-    if (provider && account) {
-      const [URI, _, root] = await prepareMerkleTree(account)
-
-      connectFactory(provider)
-      const otpValidator = await deployZkOTPValidator(root, provider)
-      await deployZkWallet(otpValidator, root, provider)
-
-      setUri(URI)
-      setBlur('')
-    }
-  }
 
   // PIN state management
   const [verified, setVerified] = useState(false)
@@ -57,6 +43,72 @@ const TotpSetup = (props: TotpSetupProps) => {
     placeholder: '•',
   })
 
+  // Manage ceramic connection
+  const [addressCeramic, setAddressCeramic] = useState<string | null>(null)
+  const { ceramicData, ceramicStatus } = useCeramic(addressCeramic)
+
+  // Create Wallet
+  useEffect(() => {
+    const createWallet = async () => {
+      if (ceramicData && ceramicData.set && provider && account) {
+        const tree = await prepareMerkleTree(account)
+
+        if (tree) {
+          const [URI, _, root, encrypted] = tree
+          ceramicData.set({ MerkleTree: encrypted })
+          connectFactory(provider)
+          const otpValidator = await deployZkOTPValidator(root, provider)
+          await deployZkWallet(otpValidator, root, provider)
+
+          setUri(URI)
+          setBlur('')
+        } else {
+          console.log('CONNECTION ERROR')
+        }
+      }
+    }
+    if (ceramicStatus == 'connected' && provider && account) {
+      createWallet()
+    }
+  }, [ceramicStatus, ceramicData, provider, account])
+
+  const createTOTPWallet = async (e: React.FormEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    setLoading(true)
+    if (account) {
+      setAddressCeramic(account)
+    }
+  }
+
+  useEffect(() => {
+    const zkProof = async () => {
+      if (ceramicData && ceramicData.content && provider && account) {
+        console.log('Read the hashes: ', ceramicData.content.MerkleTree)
+        const encryptedHashes = ceramicData.content.MerkleTree
+        const totpObject = await generateInput(pin.join(''), encryptedHashes)
+        if (totpObject) {
+          connectTOTPVerifier(provider, account)
+          try {
+            const tx = await zkTimestampProof(totpObject)
+            await tx.wait()
+            setVerified(true)
+          } catch (e) {
+            console.log(e)
+            setVerified(false)
+          }
+        }
+      }
+    }
+    if (
+      ceramicStatus == 'connected' &&
+      ceramicData.content.MerkleTree &&
+      provider &&
+      account
+    ) {
+      zkProof()
+    }
+  }, [ceramicStatus, ceramicData, provider, account])
+
   const verifyCode = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault()
     // Check if there is at least one empty field. If there is, the input is considered empty.
@@ -65,21 +117,10 @@ const TotpSetup = (props: TotpSetupProps) => {
       setError(true)
       // We set the focus on the first empty field if `error: true` was passed as a parameter in `options`.
       actionRef.current?.focus()
+      return
     }
-
-    if (provider && account) {
-      const totpObject = await generateInput(pin.join(''))
-      if (totpObject) {
-        connectTOTPVerifier(provider, account)
-        try {
-          const tx = await zkTimestampProof(totpObject)
-          await tx.wait()
-          setVerified(true)
-        } catch (e) {
-          console.log(e)
-          setVerified(false)
-        }
-      }
+    if (account) {
+      setAddressCeramic(account)
     }
   }
 

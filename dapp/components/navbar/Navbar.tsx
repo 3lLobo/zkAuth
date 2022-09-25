@@ -4,7 +4,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { DropdownAccount, ToggleColorMode } from '.'
-import { ConnectWalletButton } from '..'
 
 const Navbar = () => {
   const { account } = useEthers()
@@ -19,9 +18,6 @@ const Navbar = () => {
   return (
     <nav className="px-4 py-4">
       <div className="container flex flex-wrap justify-between items-center mx-auto max-w-6xl">
-        {/* <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-          zkAuth
-        </span> */}
         {loaded ? (
           <Link href="/">
             <a>
