@@ -1,0 +1,15 @@
+{
+  "name": "ceramic",
+  "version": "1.11",
+  "main": "index.js",
+  "author": "3lLobo",
+  "license": "MIT",
+  "devDependencies": {
+    "@3id/did-provider": "^0.4.1",
+    "@ceramicnetwork/3id-did-resolver": "^2.1.8",
+    "@ceramicnetwork/http-client": "^2.4.0",
+    "@glazed/cli": "^0.2.2",
+    "@glazed/devtools": "^0.2.0",
+    "key-did-resolver": "^2.1.2"
+  }
+}

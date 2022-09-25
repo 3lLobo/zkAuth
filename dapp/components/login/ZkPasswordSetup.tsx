@@ -69,7 +69,7 @@ const ZkPasswordSetup = (props: ZkSetupProps) => {
             Repeat Password
           </label>
           <input
-            id="password"
+            id="passwordRepeat"
             name="password"
             type="password"
             className="w-full p-2.5 rounded-lg

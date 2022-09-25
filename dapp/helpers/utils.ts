@@ -4,11 +4,13 @@ import { buildPoseidon } from 'circomlibjs'
 import totp from 'totp-generator'
 import crypto from 'crypto-browserify'
 import base32 from 'hi-base32'
+import { ethers } from 'ethers'
+import { encrypt, EthEncryptedData } from 'eth-sig-util'
 
 /**
  * Prepares Merkle Tree of hashes of [time, OTP(time)] and stores it on storage
  *
- * @returns an array containing the uri of TOTP, the secret of the TOTP and the root of the merkle tree
+ * @returns an array containing the uri of TOTP, the secret of the TOTP, the root of the merkle tree and the encrypted hashes
  */
 export async function prepareMerkleTree(
   address: string
@@ -38,23 +40,30 @@ export async function prepareMerkleTree(
     k++
   }
   let root = hashes[2 ** 8 - 2]
-  console.log('Merkle root:', root, typeof root)
+  console.log('Merkle root:', root)
+  // console.table("hashes", hashes)
 
   // TODO: Replace this local storage to IPFS or Ceramic
-  localStorage.setItem('OTPhashes', hashes.join(','))
-  return [uri, SECRET, root]
+  const encryptedHashes = encryptMetamask(hashes.join(','))
+  // localStorage.setItem('OTPhashes', hashes.join(','))
+
+  return [uri, SECRET, root, encryptedHashes]
 }
 
 /**
  * Generates inputs for on Chain OTP verification.
  *
  * @param otp - The otp entered by the user to verify
+ * @param encryptedHashes - the user specific encrypted hashes
  * @returns a formatted object ready to use with contract verification
  */
-export async function generateInput(otp: string) {
-  // TODO: Replace this local storage to IPFS or Ceramic. Optimization: Get it on local on load.
-  let hashes = localStorage.getItem('OTPhashes')?.split(',').map(BigInt)
-  //console.log(hashes)
+export async function generateInput(
+  otp: string | number,
+  encryptedHashes: string
+) {
+  // let hashes = localStorage.getItem('OTPhashes')?.split(',').map(BigInt)
+  // console.log(hashes)
+  const hashes = await decryptOrSignMetamask(encryptedHashes, 'eth_decrypt')
 
   if (hashes) {
     let poseidon = await buildPoseidon()
@@ -118,3 +127,93 @@ function prepareSecret(length = 20) {
   const randomBuffer = crypto.randomBytes(length)
   return base32.encode(randomBuffer).replace(/=/g, '')
 }
+
+// request MetaMask to decrypt data with the users wallet
+// decrypt DEPRECATED still works tho https://docs.metamask.io/guide/rpc-api.html#restricted-methods
+// Examples https://github.com/metamask/test-dapp
+// Signing v4 needs a structure as shown in msgV4
+/*
+@param method: 
+  'eth_decrypt' to decrypt
+  'eth_signTypedData_v4' to sign 
+*/
+export async function decryptOrSignMetamask(
+  encryptedData: string,
+  method: string
+): Promise<string | undefined> {
+  var provider = new ethers.providers.Web3Provider(window.ethereum)
+  var from = await provider.listAccounts()
+  let params
+
+  if (method === 'eth_signTypedData_v4') {
+    params = [from[0], msgV4(encryptedData)]
+  } else if (method === 'eth_decrypt') {
+    params = [encryptedData, from[0]]
+  } else {
+    return
+  }
+
+  if (provider.provider.request) {
+    const data = await provider.provider.request({
+      method,
+      params,
+    })
+    return data
+  }
+}
+
+export async function encryptMetamask(
+  data: string
+): Promise<string | undefined> {
+  // let encryptionPublicKey: string;
+  var provider = new ethers.providers.Web3Provider(window.ethereum)
+  var from = await provider.listAccounts()
+
+  if (provider.provider.request) {
+    const encryptionPublicKey = await provider.provider.request({
+      method: 'eth_getEncryptionPublicKey',
+      params: [from[0]],
+    })
+    if (encryptionPublicKey) {
+      const encryptedData = await encrypt(
+        encryptionPublicKey,
+        { data },
+        'x25519-xsalsa20-poly1305'
+      )
+
+      return JSON.stringify(encryptedData)
+    }
+  }
+}
+
+// Standard V4 msg to be signed resolving in the key for encryption
+const msgV4 = (Message: string): string => {
+  return JSON.stringify({
+    domain: {
+      name: 'zkAuth App',
+      version: '1.11',
+      // verifyingContract: '0xfa99801Ec6BeFcbfC1eB2d12dc8255453574b276',
+    },
+    // Defining the message signing data content.
+    message: {
+      Key: 'zk-Key',
+      Message,
+    },
+    // Refers to the keys of the *types* object below.
+    primaryType: 'SignedKey',
+    types: {
+      EIP712Domain: [
+        { name: 'name', type: 'string' },
+        { name: 'version', type: 'string' },
+        // { name: 'verifyingContract', type: 'address' },
+      ],
+      SignedKey: [
+        { name: 'Message', type: 'string' },
+        { name: 'Key', type: 'string' },
+      ],
+    },
+  })
+}
+
+const exampleMsg: string =
+  'Sign this msg to provide a wallet-bound key for en-/decryption of the Merkle tree hashes used to proof your authentication with zero Knowledge. Also: plant a tree 🌳'
