@@ -5,7 +5,9 @@ import {
   ArrowTopRightOnSquareIcon,
   ArrowRightOnRectangleIcon,
 } from '@heroicons/react/20/solid'
+import { AiOutlineDashboard } from 'react-icons/ai'
 import { shortenAddress, useEthers, useLookupAddress } from '@usedapp/core'
+import Link from 'next/link'
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
@@ -66,26 +68,27 @@ const DropdownAccount = (props: DropdownProps) => {
                 </a>
               )}
             </Menu.Item>
-            {/* <Menu.Item>
+            <Menu.Item>
               {({ active }) => (
-                <a
-                  className={classNames(
-                    active
-                      ? "bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-100"
-                      : "text-gray-700 dark:text-gray-300",
-                    "group flex items-center px-4 py-2 text-sm"
-                  )}
-                  onClick={() => deactivate()}
-                >
-                  <ArrowRightOnRectangleIcon
-                    className="mr-3 h-5 w-5 text-gray-400 
+                <Link href="/dashboard">
+                  <a
+                    className={classNames(
+                      active
+                        ? 'bg-gray-100 text-gray-900 dark:bg-gray-700 dark:text-gray-100'
+                        : 'text-gray-700 dark:text-gray-300',
+                      'group flex items-center px-4 py-2 text-sm'
+                    )}
+                  >
+                    <AiOutlineDashboard
+                      className="mr-3 h-5 w-5 text-gray-400 
                     dark:text-gray-300 group-hover:text-gray-500 dark:group-hover:text-gray-100"
-                    aria-hidden="true"
-                  />
-                  Logout
-                </a>
+                      aria-hidden="true"
+                    />
+                    Dashboard
+                  </a>
+                </Link>
               )}
-            </Menu.Item> */}
+            </Menu.Item>
           </div>
         </Menu.Items>
       </Transition>

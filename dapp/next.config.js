@@ -5,6 +5,14 @@ const nextConfig = {
   swcMinify: true,
   webpack: (config) => {
     config.resolve.fallback = { fs: false }
+    config.resolve.extensions = ['*', '.mjs', '.js', 'jsx', '.ts', '.tsx', '.json']
+    config.module.rules.push(
+      {
+        test: /\.mjs$/,
+        include: /node_modules/,
+        type: 'javascript/auto'
+      })
+
 
     return config
   },

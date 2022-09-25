@@ -4,6 +4,7 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
@@ -13,8 +14,15 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "useUnknownInCatchVariables": false
   },
-  "include": ["next-env.d.ts", "globals.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    "globals.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "helpers/circuits/witness_calculator.js"
+  ],
   "exclude": ["node_modules"]
 }

@@ -5,4 +5,7 @@ import type * as verifiers from "./Verifiers";
 export type { verifiers };
 import type * as zkOtpValidatorSol from "./ZkOtpValidator.sol";
 export type { zkOtpValidatorSol };
-export type { ZkSocialRecoveryWallet } from "./ZkSocialRecoveryWallet";
+import type * as zkSocialRecoveryWalletSol from "./ZkSocialRecoveryWallet.sol";
+export type { zkSocialRecoveryWalletSol };
+export type { TotpAuthenticator } from "./TotpAuthenticator";
+export type { ZkWalletFactory } from "./ZkWalletFactory";

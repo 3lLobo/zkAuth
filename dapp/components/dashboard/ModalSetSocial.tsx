@@ -8,6 +8,7 @@ import { CheckIcon } from '@heroicons/react/20/solid'
 import { ThreeDots } from 'react-loader-spinner'
 import { useTheme } from 'next-themes'
 import { PlusIcon } from '@heroicons/react/24/solid'
+import { PasswordTOTPBox, PasswordZKBox } from '.'
 
 interface ModalSetSocialProps {}
 
@@ -316,59 +317,57 @@ const ModalSetSocial = (props: ModalSetSocialProps) => {
                             </div>
                           </div>
                         ))}
-                      </form>
-                    </div>
-                  </div>
-                  <div className="mt-3 flex flex-row gap-3 justify-center">
-                    <button
-                      className="dark:bg-gray-800 bg-white
+                        <div className="mt-3 flex flex-row gap-3 justify-center">
+                          <button
+                            className="dark:bg-gray-800 bg-white
                       dark:hover:bg-gray-700 hover:bg-gray-100
                       dark:border-gray-600 border-gray-300
                       rounded-full border w-9 h-9"
-                      onClick={(e) => addAccount(e)}
-                    >
-                      <PlusIcon
-                        height={'1.2rem'}
-                        width={'1.2rem'}
-                        className="mx-auto"
-                      />
-                    </button>
-                    {naccounts > 3 ? (
-                      <button
-                        className="dark:bg-gray-800 bg-white
+                            onClick={(e) => addAccount(e)}
+                          >
+                            <PlusIcon
+                              height={'1.2rem'}
+                              width={'1.2rem'}
+                              className="mx-auto"
+                            />
+                          </button>
+                          {naccounts > 3 ? (
+                            <button
+                              className="dark:bg-gray-800 bg-white
                         dark:hover:bg-gray-700 hover:bg-gray-100
                         dark:border-gray-600 border-gray-300
                         rounded-full border w-9 h-9"
-                        onClick={(e) => removeAccount(e)}
-                      >
-                        <MinusIcon
-                          height={'1.2rem'}
-                          width={'1.2rem'}
-                          className="mx-auto"
-                        />
-                      </button>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
+                              onClick={(e) => removeAccount(e)}
+                            >
+                              <MinusIcon
+                                height={'1.2rem'}
+                                width={'1.2rem'}
+                                className="mx-auto"
+                              />
+                            </button>
+                          ) : (
+                            <></>
+                          )}
+                        </div>
 
-                  <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                    <button
-                      type="button"
-                      className="inline-flex w-50 ml-3 button-color disabled:opacity-25"
-                      onClick={() => setOpen(false)}
-                      disabled={!allVerified}
-                    >
-                      Set
-                    </button>
-
-                    <button
-                      type="button"
-                      className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm "
-                      onClick={() => setOpen(false)}
-                    >
-                      Close
-                    </button>
+                        <div
+                          id="password"
+                          className="w-full mt-3 flex flex-row gap-3 justify-center"
+                        >
+                          {false ? (
+                            <PasswordTOTPBox
+                              setOpen={setOpen}
+                              allVerified={allVerified}
+                            />
+                          ) : (
+                            <PasswordZKBox
+                              setOpen={setOpen}
+                              allVerified={allVerified}
+                            />
+                          )}
+                        </div>
+                      </form>
+                    </div>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

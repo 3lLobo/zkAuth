@@ -4,25 +4,23 @@ import { buildPoseidon } from 'circomlibjs'
 import totp from 'totp-generator'
 import crypto from 'crypto-browserify'
 import base32 from 'hi-base32'
-import QRCode from 'qrcode'
 import { ethers } from 'ethers'
 import { encrypt, EthEncryptedData } from 'eth-sig-util'
-
-const uriPrefix = 'otpauth://totp/zkAuth:account?secret='
-const uriSuffix = '&issuer=zkAuth'
 
 /**
  * Prepares Merkle Tree of hashes of [time, OTP(time)] and stores it on storage
  *
  * @returns an array containing the uri of TOTP, the secret of the TOTP, the root of the merkle tree and the encrypted hashes
  */
-export async function prepareMerkleTree() {
+export async function prepareMerkleTree(
+  address: string
+): Promise<[string, string, BigInt]> {
   const SECRET = prepareSecret()
-  const uri = await prepareQRCode(SECRET)
+  const uri = prepareURI(SECRET, address)
 
   const startTime = Math.floor(Date.now() / 30000 - 1) * 30000
   let poseidon = await buildPoseidon()
-  let hashes: string[] = []
+  let hashes: BigInt[] = []
   let tokens: Record<number, any> = {}
 
   for (let i = 0; i < 2 ** 7; i++) {
@@ -59,7 +57,10 @@ export async function prepareMerkleTree() {
  * @param encryptedHashes - the user specific encrypted hashes
  * @returns a formatted object ready to use with contract verification
  */
-export async function generateInput(otp: string | number, encryptedHashes: string) {
+export async function generateInput(
+  otp: string | number,
+  encryptedHashes: string
+) {
   // let hashes = localStorage.getItem('OTPhashes')?.split(',').map(BigInt)
   // console.log(hashes)
   const hashes = await decryptOrSignMetamask(encryptedHashes, 'eth_decrypt')
@@ -110,15 +111,22 @@ export async function generateInput(otp: string | number, encryptedHashes: strin
   }
 }
 
-async function prepareQRCode(secret: string) {
-  return await QRCode.toDataURL(uriPrefix.concat(secret).concat(uriSuffix))
+function prepareURI(secret: string, address: string) {
+  const type = 'totp'
+  const issuer = 'zkAuth' //encodeURIComponent(issuer)
+  const algorithm = 'SHA1'
+  const period = '30'
+  const digits = '6'
+
+  const uri = `otpauth://${type}/${issuer}:${address}?secret=${secret}&issuer=${issuer}&algorithm=${algorithm}&digits=${digits}&period=${period}`
+
+  return uri
 }
 
 function prepareSecret(length = 20) {
   const randomBuffer = crypto.randomBytes(length)
   return base32.encode(randomBuffer).replace(/=/g, '')
 }
-
 
 // request MetaMask to decrypt data with the users wallet
 // decrypt DEPRECATED still works tho https://docs.metamask.io/guide/rpc-api.html#restricted-methods
@@ -129,7 +137,10 @@ function prepareSecret(length = 20) {
   'eth_decrypt' to decrypt
   'eth_signTypedData_v4' to sign 
 */
-export async function decryptOrSignMetamask(encryptedData: string, method: string): Promise<string | undefined> {
+export async function decryptOrSignMetamask(
+  encryptedData: string,
+  method: string
+): Promise<string | undefined> {
   var provider = new ethers.providers.Web3Provider(window.ethereum)
   var from = await provider.listAccounts()
   let params
@@ -151,9 +162,9 @@ export async function decryptOrSignMetamask(encryptedData: string, method: strin
   }
 }
 
-
-export async function encryptMetamask(data: string): Promise<string | undefined> {
-
+export async function encryptMetamask(
+  data: string
+): Promise<string | undefined> {
   // let encryptionPublicKey: string;
   var provider = new ethers.providers.Web3Provider(window.ethereum)
   var from = await provider.listAccounts()
@@ -164,11 +175,10 @@ export async function encryptMetamask(data: string): Promise<string | undefined>
       params: [from[0]],
     })
     if (encryptionPublicKey) {
-
       const encryptedData = await encrypt(
         encryptionPublicKey,
         { data },
-        'x25519-xsalsa20-poly1305',
+        'x25519-xsalsa20-poly1305'
       )
 
       return JSON.stringify(encryptedData)
@@ -186,7 +196,7 @@ const msgV4 = (Message: string): string => {
     },
     // Defining the message signing data content.
     message: {
-      Key: "zk-Key",
+      Key: 'zk-Key',
       Message,
     },
     // Refers to the keys of the *types* object below.
@@ -202,8 +212,8 @@ const msgV4 = (Message: string): string => {
         { name: 'Key', type: 'string' },
       ],
     },
-  }
-  )
-};
+  })
+}
 
-const exampleMsg: string = "Sign this msg to provide a wallet-bound key for en-/decryption of the Merkle tree hashes used to proof your authentication with zero Knowledge. Also: plant a tree 🌳"
+const exampleMsg: string =
+  'Sign this msg to provide a wallet-bound key for en-/decryption of the Merkle tree hashes used to proof your authentication with zero Knowledge. Also: plant a tree 🌳'
