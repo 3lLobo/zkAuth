@@ -1,5 +1,4 @@
 import { useEthers } from '@usedapp/core'
-import { info } from 'console'
 import { ethers } from 'ethers'
 import { motion } from 'framer-motion'
 import type { NextPage } from 'next'
@@ -13,7 +12,7 @@ import {
   BoxSocialRecovery,
   BoxPendingTransaction,
 } from '../components'
-import { connectFactory, connectZkWallet } from '../helpers/contracts'
+import { connectZkWallet } from '../helpers/contracts'
 
 const containerUpperBoxes = {
   hidden: {},
@@ -69,24 +68,7 @@ const txBox = {
 }
 
 const Dashboard: NextPage = () => {
-  const { activate, library, account } = useEthers()
-
-  // Set up provider if already connected
-  const checkMetaMaskConnected = useCallback(async () => {
-    const { ethereum } = window
-    if (ethereum && !library) {
-      var provider = new ethers.providers.Web3Provider(ethereum)
-      const accounts = await provider.listAccounts()
-      const connected = accounts.length > 0
-      if (connected) {
-        activate(provider)
-      }
-    }
-  }, [activate])
-
-  useEffect(() => {
-    checkMetaMaskConnected()
-  }, [checkMetaMaskConnected])
+  const { library, account } = useEthers()
 
   // Load blockchain info
   const router = useRouter()
