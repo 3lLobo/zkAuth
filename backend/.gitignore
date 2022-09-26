@@ -130,7 +130,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 circuits/build
-artifacts
 cache
 *.ptau
 deployments
