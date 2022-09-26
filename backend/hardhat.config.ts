@@ -4,6 +4,7 @@ import 'hardhat-deploy-ethers'
 import '@typechain/hardhat'
 
 import '@nomicfoundation/hardhat-toolbox'
+require('dotenv').config()
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -26,7 +27,7 @@ const config: HardhatUserConfig = {
     // for testnet
     'optimism-goerli': {
       url: 'https://goerli.optimism.io',
-      //accounts: [privateKey1, ]
+      accounts: [process.env.PRIVATE_GOERLII_KEY ?? ''],
     },
     // for the local dev environment
     'optimism-local': {
