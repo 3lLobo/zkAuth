@@ -20,6 +20,7 @@ const LogInBox = () => {
           const zkWalletFactory = connectFactory(provider)
           const walletAddress =
             await zkWalletFactory.userAddressToWalletAddress(account)
+          console.log(walletAddress)
           if (walletAddress !== ethers.constants.AddressZero) {
             router.push('./dashboard')
           }

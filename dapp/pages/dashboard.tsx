@@ -98,17 +98,12 @@ const Dashboard: NextPage = () => {
   useEffect(() => {
     const loadData = async () => {
       if (library && account) {
-        //load factory
-        const zkWalletFactory = connectFactory(library)
-        const walletAddress = await zkWalletFactory.userAddressToWalletAddress(
-          account
-        )
-        if (walletAddress == ethers.constants.AddressZero) {
+        //load wallet
+        const zkWallet = await connectZkWallet(library, account)
+        if (!zkWallet) {
           router.push('./login')
           return
         }
-        //load wallet
-        const zkWallet = connectZkWallet(library, walletAddress)
         const numberTrustees = (await zkWallet.numberTrustees()).toString()
         const trustees = [] //await zkWallet.Trustees(1)
         setInfo({ ...info, numberTrustees: numberTrustees })
