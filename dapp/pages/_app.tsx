@@ -6,9 +6,12 @@ import { DAppProvider, Localhost } from '@usedapp/core'
 
 import { Provider as CeramicProvider } from '@self.id/react'
 
+const optGoerliChainId = 420
+const optGoerliUrl = 'https://goerli.optimism.io'
 const config = {
-  readOnlyChainId: Localhost.chainId,
+  readOnlyChainId: optGoerliChainId,
   readOnlyUrls: {
+    [optGoerliChainId]: optGoerliUrl,
     [Localhost.chainId]: 'http://127.0.0.1:8545',
   },
 }

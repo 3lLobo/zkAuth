@@ -18,6 +18,15 @@ yarn remixed -s . --remix-ide https://remix.ethereum.org
 yarn hardhat test
 ```
 
+## Optimism-Goerli Contracts
+
+26.9.2022
+
+HashCeckVerifier = 0xDFD466d2A14cB2895f2C8BCacc67BDEF37C60De0
+OtpMerkleTreeVerifier = 0x87469041b414E1f2dEC2e79e32f4E911E7f50622
+ZkWalletFactory = 0x3279ed6de4392babc48a758eddd8687208dcbf4ec8531f17e9bd00ceb9c59e77
+
+
 ## Hashing
 
 How to calculate and submit hash:
