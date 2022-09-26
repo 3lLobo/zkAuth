@@ -6,6 +6,12 @@ We proudly present the TotpAuthenticator.
 One step closer to zero trust and one step away from web2.
 You can now use 2FA authentication for your business contacts your web-applications or even your IOTs without a centralized database storing your keys and authenticating users. The Blocqchain takes over!
 
+## Delpoy on Optimism Görli
+
+First set your private key on a .env file
+
+yarn hardhat deploy --network optimsm-goerli
+
 ## Cyborg Run 🏃‍♂️
 
 Yarn, remix and hardhat:
