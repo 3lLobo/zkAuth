@@ -15,30 +15,48 @@ interface IHashCheckVerifier {
   ) external view returns (bool);
 }
 
+/// @title ZkSocialRecoveryWallet
+/// @author ZK Authentication team
+/// @notice You can use this contract for providing 2 factor authentication and social recovery
+/// @dev All function calls are currently implemented without side effects
 contract ZkSocialRecoveryWallet is IERC721Receiver, ZkOtpValidator {
+  /// Address of hash check verifier
   address hashCheckVerifier;
 
+  /// Address of owner
   address public owner;
 
+  /// password is not stored directly. We store the poseidon(public key user, password)
   uint256 private ownerPasswordHash;
 
+  /// Minimum number of votes a new owner needs to get for execution
   uint256 private thresholdForRecovery;
 
+  /// Unique counter for recovery rounds
   uint256 public currentRecoveryNumber;
-  //to retrieve in frontend
+
+  /// Number of trustees(to retrieve in frontend)
   uint256 public numberTrustees;
+
+  /// List of trustees
   address[] public Trustees;
 
+  /// Map to find if an address is a trustee
   mapping(address => bool) Trustee;
 
+  /// Map to store password hash corresponding to an address
   mapping(address => uint256) trusteeToPasswordHash;
 
+  /// Map to store an owner and prevent trustees to use it again
   mapping(address => bool) pastOwners;
 
+  /// Map to store if a proof is used
   mapping(uint256 => bool) usedProofs;
 
+  /// Its true when recovery is in process
   bool public isRecoveryOn;
 
+  /// Struct to store the variable required for the social recovery procedure
   struct RecoveryProcedure {
     uint256 numberOfVotesInSupport;
     address newOwnerProposed;
@@ -46,6 +64,7 @@ contract ZkSocialRecoveryWallet is IERC721Receiver, ZkOtpValidator {
     mapping(address => bool) trusteeSupporters;
   }
 
+  /// Map to store the RecoveryProcedure for a recovery round number
   mapping(uint256 => RecoveryProcedure) recoveryRoundNumberToProcedure;
 
   event NewRecoveryProcedure(
@@ -116,18 +135,27 @@ contract ZkSocialRecoveryWallet is IERC721Receiver, ZkOtpValidator {
     thresholdForRecovery = _thresholdForRecovery;
   }
 
-  // To set trustees after deployment
+  /**
+   * @notice Set the trustees of a wallet after deployment
+   * @param _trustees the list of trustee addresses
+   */
   function setTrustees(address[] memory _trustees) external isOwner {
-      for (uint256 i = 0; i < _trustees.length; i++) {
+    for (uint256 i = 0; i < _trustees.length; i++) {
       require(!Trustee[_trustees[i]], 'Duplicate trustee in list');
       Trustee[_trustees[i]] = true;
     }
     Trustees = _trustees;
     numberTrustees = _trustees.length;
-    }
+  }
 
-  // Set trustees password after deployment
-function setTrusteesPasswords(uint256[] memory _passwordHashes) external isOwner {
+  /**
+   * @notice Set the trustees password's hash of a wallet after deployment
+   * @param _passwordHashes the list of trustee password hashes
+   */
+  function setTrusteesPasswords(uint256[] memory _passwordHashes)
+    external
+    isOwner
+  {
     require(
       Trustees.length == _passwordHashes.length,
       'Trustees and hashes length diff'
@@ -137,6 +165,14 @@ function setTrusteesPasswords(uint256[] memory _passwordHashes) external isOwner
     }
   }
 
+  /**
+   * @notice Start the recovery process
+   * @param a hash check proof from zk circuit
+   * @param b hash check proof from zk circuit
+   * @param c hash check proof from zk circuit
+   * @param Input public signals containing the password hash
+   * @param newOwner address of new owner
+   */
   function startRecovery(
     uint256[2] memory a,
     uint256[2][2] memory b,
@@ -171,6 +207,14 @@ function setTrusteesPasswords(uint256[] memory _passwordHashes) external isOwner
     return currentRecoveryNumber;
   }
 
+  /**
+   * @notice Vote in a recovery process already in process
+   * @param a hash check proof from zk circuit
+   * @param b hash check proof from zk circuit
+   * @param c hash check proof from zk circuit
+   * @param Input public signals containing the password hash
+   * @param recoveryRoundNumber current recovery round going on
+   */
   function voteInRecovery(
     uint256[2] memory a,
     uint256[2][2] memory b,
@@ -203,6 +247,14 @@ function setTrusteesPasswords(uint256[] memory _passwordHashes) external isOwner
     emit VotedInRecovery(msg.sender, recoveryRoundNumber);
   }
 
+  /**
+   * @notice Execute and finish the recovery process
+   * @param a hash check proof from zk circuit
+   * @param b hash check proof from zk circuit
+   * @param c hash check proof from zk circuit
+   * @param Input public signals containing the password hash
+   * @param recoveryRoundNumber current recovery round going on
+   */
   function executeRecoveryChange(
     uint256[2] memory a,
     uint256[2][2] memory b,
@@ -234,6 +286,14 @@ function setTrusteesPasswords(uint256[] memory _passwordHashes) external isOwner
     emit RecoveryExecuted(old, owner, recoveryRoundNumber);
   }
 
+  /**
+   * @notice Vote in a recovery process already in process
+   * @param a hash check proof from zk circuit
+   * @param b hash check proof from zk circuit
+   * @param c hash check proof from zk circuit
+   * @param Input public signals containing the password hash
+   * @param recoveryRoundNumber current recovery round going on
+   */
   function cancelRecovery(
     uint256[2] memory a,
     uint256[2][2] memory b,
@@ -251,6 +311,15 @@ function setTrusteesPasswords(uint256[] memory _passwordHashes) external isOwner
     emit RecoveryCancelled(owner, recoveryRoundNumber);
   }
 
+  /**
+   * @notice Execute a transaction after OTP verification
+   * @param a OTP verification proof from zk circuit
+   * @param b OTP verification proof from zk circuit
+   * @param c OTP verification proof from zk circuit
+   * @param input public signals containing the Merkle root and time
+   * @param callee address of callee
+   * @param value amount
+   */
   function executeTxn(
     uint256[2] memory a,
     uint256[2][2] memory b,
@@ -260,7 +329,7 @@ function setTrusteesPasswords(uint256[] memory _passwordHashes) external isOwner
     uint256 value
   ) external isOwner returns (bytes memory result) {
     require(verifyOTP(a, b, c, input), 'Proof failed');
-    (bool success, bytes memory result) = callee.call{value: value}("");
+    (bool success, bytes memory result) = callee.call{value: value}('');
     require(success, 'external call reverted');
     // emit TransactionExecuted(callee, value, data);
     return result;
@@ -275,5 +344,8 @@ function setTrusteesPasswords(uint256[] memory _passwordHashes) external isOwner
     return this.onERC721Received.selector;
   }
 
+  /**
+   * @notice recieve funds
+   */
   receive() external payable {}
 }
