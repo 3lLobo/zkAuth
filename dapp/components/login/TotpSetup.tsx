@@ -10,9 +10,7 @@ import { ModalVerifyTotp, QrCodeAuth } from './'
 
 import { prepareMerkleTree, generateInput } from '../../helpers/utils'
 import {
-  connectFactory,
-  connectTOTPVerifier,
-  deployZkOTPValidator,
+  connectZkWallet,
   deployZkWallet,
   zkTimestampProof,
 } from '../../helpers/contracts'
@@ -57,9 +55,8 @@ const TotpSetup = (props: TotpSetupProps) => {
       if (tree) {
         const [URI, _, root, encrypted] = tree
         ceramicData.set({ MerkleTree: encrypted })
-        connectFactory(provider)
-        const otpValidator = await deployZkOTPValidator(root, provider)
-        await deployZkWallet(otpValidator, root, provider)
+
+        await deployZkWallet(root, provider)
 
         setUri(URI)
         setBlur('')
@@ -84,7 +81,7 @@ const TotpSetup = (props: TotpSetupProps) => {
       const encryptedHashes = ceramicData.content.MerkleTree
       const totpObject = await generateInput(pin.join(''), encryptedHashes)
       if (totpObject) {
-        connectTOTPVerifier(provider, account)
+        await connectZkWallet(provider, account)
         try {
           const tx = await zkTimestampProof(totpObject)
           await tx.wait()

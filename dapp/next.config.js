@@ -3,6 +3,9 @@ require("dotenv").config()
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  images: {
+    unoptimized: true,
+  },
   webpack: (config) => {
     config.resolve.fallback = { fs: false }
     config.resolve.extensions = ['*', '.mjs', '.js', 'jsx', '.ts', '.tsx', '.json']

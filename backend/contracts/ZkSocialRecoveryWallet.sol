@@ -15,7 +15,7 @@ interface IHashCheckVerifier {
   ) external view returns (bool);
 }
 
-contract ZkSocialRecoveryWallet is IERC721Receiver {
+contract ZkSocialRecoveryWallet is IERC721Receiver, ZkOtpValidator {
   address hashCheckVerifier;
 
   address public owner;
@@ -38,9 +38,6 @@ contract ZkSocialRecoveryWallet is IERC721Receiver {
   mapping(uint256 => bool) usedProofs;
 
   bool public isRecoveryOn;
-
-  address public otpVerifierAddress;
-  ZkOtpValidator otpVerifier;
 
   struct RecoveryProcedure {
     uint256 numberOfVotesInSupport;
@@ -109,17 +106,14 @@ contract ZkSocialRecoveryWallet is IERC721Receiver {
     uint256 _ownerPasswordHash,
     uint256 _thresholdForRecovery,
     uint256 _root,
-    address _otpVerifier
-  ) {
+    address _otpMerkleTreeVerifier
+  ) ZkOtpValidator(_root, _otpMerkleTreeVerifier) {
     require(_hashCheckVerifier != address(0), 'Zero address verifier');
 
     hashCheckVerifier = _hashCheckVerifier;
     owner = msg.sender;
     ownerPasswordHash = _ownerPasswordHash;
-    
     thresholdForRecovery = _thresholdForRecovery;
-    otpVerifierAddress = _otpVerifier;
-    otpVerifier = new ZkOtpValidator(_root, _otpVerifier);
   }
 
   // To set trustees after deployment
@@ -131,7 +125,7 @@ contract ZkSocialRecoveryWallet is IERC721Receiver {
     Trustees = _trustees;
     numberTrustees = _trustees.length;
     }
-    
+
   // Set trustees password after deployment
 function setTrusteesPasswords(uint256[] memory _passwordHashes) external isOwner {
     require(
@@ -265,7 +259,7 @@ function setTrusteesPasswords(uint256[] memory _passwordHashes) external isOwner
     address callee,
     uint256 value
   ) external isOwner returns (bytes memory result) {
-    require(otpVerifier.verifyOTP(a, b, c, input), 'Proof failed');
+    require(verifyOTP(a, b, c, input), 'Proof failed');
     (bool success, bytes memory result) = callee.call{value: value}("");
     require(success, 'external call reverted');
     // emit TransactionExecuted(callee, value, data);

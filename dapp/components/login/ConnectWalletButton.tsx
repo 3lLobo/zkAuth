@@ -70,22 +70,6 @@ const ConnectWalletButton = () => {
     }
   }, [web3Modal, activate])
 
-  // Set up provider if already connected
-  useEffect(() => {
-    const { ethereum } = window
-    const checkMetaMaskConnected = async () => {
-      var provider = new ethers.providers.Web3Provider(ethereum)
-      const accounts = await provider.listAccounts()
-      const connected = accounts.length > 0
-      if (connected) {
-        activate(provider)
-      }
-    }
-    if (ethereum && !library) {
-      checkMetaMaskConnected()
-    }
-  })
-
   if (!loaded) return null
 
   return (

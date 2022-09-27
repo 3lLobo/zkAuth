@@ -37,11 +37,11 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
     "isRecoveryOn()": FunctionFragment;
     "numberTrustees()": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
-    "otpVerifierAddress()": FunctionFragment;
     "owner()": FunctionFragment;
     "setTrustees(address[])": FunctionFragment;
     "setTrusteesPasswords(uint256[])": FunctionFragment;
     "startRecovery(uint256[2],uint256[2][2],uint256[2],uint256[1],address)": FunctionFragment;
+    "verifyOTP(uint256[2],uint256[2][2],uint256[2],uint256[2])": FunctionFragment;
     "voteInRecovery(uint256[2],uint256[2][2],uint256[2],uint256[1],uint256)": FunctionFragment;
   };
 
@@ -55,11 +55,11 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
       | "isRecoveryOn"
       | "numberTrustees"
       | "onERC721Received"
-      | "otpVerifierAddress"
       | "owner"
       | "setTrustees"
       | "setTrusteesPasswords"
       | "startRecovery"
+      | "verifyOTP"
       | "voteInRecovery"
   ): FunctionFragment;
 
@@ -128,10 +128,6 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
       PromiseOrValue<BytesLike>
     ]
   ): string;
-  encodeFunctionData(
-    functionFragment: "otpVerifierAddress",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "setTrustees",
@@ -152,6 +148,18 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
       [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
       [PromiseOrValue<BigNumberish>],
       PromiseOrValue<string>
+    ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "verifyOTP",
+    values: [
+      [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+      [
+        [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+        [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+      ],
+      [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+      [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
     ]
   ): string;
   encodeFunctionData(
@@ -194,10 +202,6 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
     functionFragment: "onERC721Received",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "otpVerifierAddress",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setTrustees",
@@ -211,6 +215,7 @@ export interface ZkSocialRecoveryWalletInterface extends utils.Interface {
     functionFragment: "startRecovery",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "verifyOTP", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "voteInRecovery",
     data: BytesLike
@@ -361,8 +366,6 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    otpVerifierAddress(overrides?: CallOverrides): Promise<[string]>;
-
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     setTrustees(
@@ -384,6 +387,17 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       c: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
       Input: [PromiseOrValue<BigNumberish>],
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    verifyOTP(
+      a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+      b: [
+        [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+        [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+      ],
+      c: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+      input: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -456,8 +470,6 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  otpVerifierAddress(overrides?: CallOverrides): Promise<string>;
-
   owner(overrides?: CallOverrides): Promise<string>;
 
   setTrustees(
@@ -479,6 +491,17 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
     c: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
     Input: [PromiseOrValue<BigNumberish>],
     newOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  verifyOTP(
+    a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+    b: [
+      [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+      [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    ],
+    c: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+    input: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -551,8 +574,6 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    otpVerifierAddress(overrides?: CallOverrides): Promise<string>;
-
     owner(overrides?: CallOverrides): Promise<string>;
 
     setTrustees(
@@ -576,6 +597,17 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    verifyOTP(
+      a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+      b: [
+        [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+        [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+      ],
+      c: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+      input: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     voteInRecovery(
       a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
@@ -689,8 +721,6 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    otpVerifierAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     setTrustees(
@@ -712,6 +742,17 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       c: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
       Input: [PromiseOrValue<BigNumberish>],
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    verifyOTP(
+      a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+      b: [
+        [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+        [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+      ],
+      c: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+      input: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -787,10 +828,6 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    otpVerifierAddress(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setTrustees(
@@ -812,6 +849,17 @@ export interface ZkSocialRecoveryWallet extends BaseContract {
       c: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
       Input: [PromiseOrValue<BigNumberish>],
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    verifyOTP(
+      a: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+      b: [
+        [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+        [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+      ],
+      c: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
+      input: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>],
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

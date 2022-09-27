@@ -18,7 +18,6 @@ interface DropdownProps {
 }
 
 const DropdownAccount = (props: DropdownProps) => {
-  const { deactivate } = useEthers()
   const { ens } = useLookupAddress(props.account)
 
   return (

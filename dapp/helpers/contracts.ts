@@ -5,43 +5,10 @@ import { buildPoseidon } from 'circomlibjs'
 
 import zkWalletFactoryJson from '../../backend/artifacts/contracts/ZkWalletFactory.sol/ZkWalletFactory.json'
 
-import ZkOtpValidatorJson from '../../backend/artifacts/contracts/ZkOtpValidator.sol/ZkOtpValidator.json'
-
 import ZkWalletJson from '../../backend/artifacts/contracts/ZkSocialRecoveryWallet.sol/ZkSocialRecoveryWallet.json'
 
 let zkWalletFactory: ethers.Contract
-let ZkOtpValidator: ethers.Contract
 let ZkWallet: ethers.Contract
-
-export async function connectTOTPVerifier(
-  provider: ethers.providers.JsonRpcProvider,
-  account: string
-) {
-  let signer = provider.getSigner()
-  // We connect to get wallet address
-  const ifaceFactory = new ethers.utils.Interface(zkWalletFactoryJson.abi)
-
-  zkWalletFactory = new ethers.Contract(
-    address['zkWalletFactory'],
-    ifaceFactory,
-    signer
-  )
-
-  const walletAddress = await zkWalletFactory.userAddressToWalletAddress(
-    account
-  )
-
-  // We retrieve zk totp verificator address
-  const ifaceWallet = new ethers.utils.Interface(ZkWalletJson.abi)
-
-  const zkWallet = new ethers.Contract(walletAddress, ifaceWallet, signer)
-  const zkOtpValidatorAddress = await zkWallet.otpVerifierAddress()
-
-  const iface = new ethers.utils.Interface(ZkOtpValidatorJson.abi)
-  ZkOtpValidator = new ethers.Contract(zkOtpValidatorAddress, iface, signer)
-
-  console.log('Connect to zkOTP Contract:', ZkOtpValidator)
-}
 
 export function connectFactory(provider: ethers.providers.JsonRpcProvider) {
   let signer = provider.getSigner()
@@ -57,89 +24,50 @@ export function connectFactory(provider: ethers.providers.JsonRpcProvider) {
   return zkWalletFactory
 }
 
-export async function deployZkOTPValidator(
-  root: BigInt,
-  provider: ethers.providers.JsonRpcProvider
-) {
-  const iface = new ethers.utils.Interface(ZkOtpValidatorJson.abi)
-  let signer = provider.getSigner()
-  const ZkOTPValidatorFactory = new ethers.ContractFactory(
-    iface,
-    ZkOtpValidatorJson.bytecode,
-    signer
-  )
-
-  const ZkOTPValidator = await ZkOTPValidatorFactory.deploy(
-    root,
-    address['OtpMerkleTreeVerifier']
-  )
-
-  localStorage.setItem('ZkOTPValidator Address', ZkOTPValidator.address)
-
-  return ZkOTPValidator.address
-}
-
 export async function deployZkWallet(
-  otpVerifier: string,
   root: BigInt,
   provider: ethers.providers.JsonRpcProvider
 ) {
   connectFactory(provider)
 
-  const zkWalletFactoryContract = await zkWalletFactory.deployWallet(
+  await zkWalletFactory.deployWallet(
     0,
     0,
-    otpVerifier,
+    address['OtpMerkleTreeVerifier'],
     root
   )
-
-  return zkWalletFactoryContract.address
 }
 
-export function connectZkWallet(
+export async function connectZkWallet(
   provider: ethers.providers.JsonRpcProvider,
-  walletAddress: string
+  userAddress: string
 ) {
+  //connect to factory to retrive wallet address
+  connectFactory(provider)
+  console.log("🚀 ~ file: contracts.ts ~ line 47 ~ provider", provider)
+  console.log("🚀 ~ file: contracts.ts ~ line 61 ~ userAddress", userAddress)
+  console.log("🚀 ~ file: contracts.ts ~ line 50 ~ zkWalletFactory", zkWalletFactory)
+  const walletAddress = await zkWalletFactory.userAddressToWalletAddress(
+    userAddress
+  )
+
   let signer = provider.getSigner()
-
   const iface = new ethers.utils.Interface(ZkWalletJson.abi)
-
+  if (walletAddress == ethers.constants.AddressZero) {
+    return undefined
+  }
   ZkWallet = new ethers.Contract(walletAddress, iface, signer)
-  console.log('Connect to ZkWallet Contract:', ZkWallet)
+  console.log('Connected to ZkWallet Contract:', ZkWallet)
+
   return ZkWallet
 }
-
-// export async function zkProof(input: Object) {
-
-//     let calldata = await generateCalldata(input);
-//     let tx;
-
-//     if (calldata) {
-//         tx = await otp.naiveApproval(calldata[0], calldata[1], calldata[2], calldata[3])
-//             .catch((error: any) => {
-//                 console.log(error);
-//                 let errorMsg;
-//                 if (error.reason) {
-//                     errorMsg = error.reason;
-//                 } else if (error.data.message) {
-//                     errorMsg = error.data.message;
-//                 } else {
-//                     errorMsg = "Unknown error."
-//                 }
-//                 throw errorMsg;
-//             });
-//     } else {
-//         throw new Error("Witness generation failed.");
-//     }
-//     return tx;
-// }
 
 export async function zkTimestampProof(input: Object) {
   let calldata = await generateCalldata(input, 'otp_verification')
   let tx
 
   if (calldata) {
-    tx = await ZkOtpValidator.verifyOTP(
+    tx = await ZkWallet.verifyOTP(
       calldata[0],
       calldata[1],
       calldata[2],

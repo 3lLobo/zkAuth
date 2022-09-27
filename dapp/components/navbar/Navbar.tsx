@@ -1,4 +1,5 @@
 import { useEthers } from '@usedapp/core'
+import { ethers } from 'ethers'
 import { useTheme } from 'next-themes'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -6,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { DropdownAccount, ToggleColorMode } from '.'
 
 const Navbar = () => {
-  const { account } = useEthers()
+  const { account, library, activate } = useEthers()
   const { theme } = useTheme()
   const [loaded, setLoaded] = useState(false)
   useEffect(() => {
@@ -14,6 +15,23 @@ const Navbar = () => {
       setLoaded(true)
     }
   })
+
+  // Set up provider if already connected
+
+  useEffect(() => {
+    const { ethereum } = window
+    const checkMetaMaskConnected = async () => {
+      if (ethereum && !library) {
+        var provider = new ethers.providers.Web3Provider(ethereum)
+        const accounts = await provider.listAccounts()
+        const connected = accounts.length > 0
+        if (connected) {
+          activate(provider)
+        }
+      }
+    }
+    checkMetaMaskConnected()
+  }, [library])
 
   return (
     <nav className="px-4 py-4">
