@@ -12,20 +12,23 @@ For optimal security and user-experience, incorporate it with 2nd gen Wallets (E
 
 ## The turing wheels
 
-Here an walkthrough of our complete Turing contracts:
+Here an walk-through of our complete contracts:
 
 ### zkWalletFactory
 
-TODO: 
+<!-- TODO:  -->
+Upon successfully setting up 2FA, the msg.sender gets assigned a personal `ZkSocialRecoveryWallet`.
+The Factory takes on the tasks of creating those wallets, mapping addresses to wallets and connecting to the hash-verifier for social recovery.
+
 ### HashCheckVerifier
 
-TODO:
-
+<!-- TODO: -->
+The logic used to recover wa compromised wallet and reassign its owner.
 
 ### OtpMerkleTreeVerifier
 
-TODO:
-
+<!-- TODO: -->
+The logic  to verify the wallet specific 2 factor authentication.
 
 
 ## Cyborg Run 🏃‍♂️
