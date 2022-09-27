@@ -316,8 +316,9 @@ contract ZkSocialRecoveryWallet is IERC721Receiver, ZkOtpValidator {
    * @param a OTP verification proof from zk circuit
    * @param b OTP verification proof from zk circuit
    * @param c OTP verification proof from zk circuit
-   * @param Input public signals containing the Merkle root and time
-   * @param recoveryRoundNumber current recovery round going on
+   * @param input public signals containing the Merkle root and time
+   * @param callee address of callee
+   * @param value amount
    */
   function executeTxn(
     uint256[2] memory a,
