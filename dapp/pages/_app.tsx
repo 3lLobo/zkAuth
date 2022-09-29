@@ -25,10 +25,11 @@ export const OptimismGoerli: Chain = {
     decimals: 18,
   },
 }
-const config = {
-  readOnlyChainId: Localhost.chainId,
+
+const config: any = {
+  readOnlyChainId: OptimismGoerli.chainId,
   readOnlyUrls: {
-    [Localhost.chainId]: 'http://127.0.0.1:8545',
+    [OptimismGoerli.chainId]: OptimismGoerli.rpcUrl,
   },
   networks: [OptimismGoerli],
 }

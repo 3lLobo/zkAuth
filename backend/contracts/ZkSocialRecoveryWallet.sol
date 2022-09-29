@@ -150,7 +150,7 @@ contract ZkSocialRecoveryWallet is IERC721Receiver, ZkOtpValidator {
 
   /**
    * @notice Set the trustees password's hash of a wallet after deployment
-   * @param _trustees the list of trustee addresses
+   * @param _passwordHashes the list of trustee password hashes
    */
   function setTrusteesPasswords(uint256[] memory _passwordHashes)
     external
@@ -316,8 +316,9 @@ contract ZkSocialRecoveryWallet is IERC721Receiver, ZkOtpValidator {
    * @param a OTP verification proof from zk circuit
    * @param b OTP verification proof from zk circuit
    * @param c OTP verification proof from zk circuit
-   * @param Input public signals containing the Merkle root and time
-   * @param recoveryRoundNumber current recovery round going on
+   * @param input public signals containing the Merkle root and time
+   * @param callee address of callee
+   * @param value amount
    */
   function executeTxn(
     uint256[2] memory a,

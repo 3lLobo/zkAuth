@@ -80,6 +80,9 @@ Each trustee has then the option to consent to the recovery-process by submittin
 Once a predefined threshold (at least majority) of consents is reached, the user is able to recover his authentication contract by in a last step, providing the SNARK proofs of his personal passphrase.
 
 
+[Live Demo](https://zkauth.netlify.app/)
+
+
 ![zkauthLogo](https://user-images.githubusercontent.com/25290565/192105366-ac07356c-594b-4353-a9c5-596ecd46551d.png)
 
 

@@ -46,7 +46,7 @@ contract ZkOtpValidator {
    * @param a OTP verification proof from zk circuit
    * @param b OTP verification proof from zk circuit
    * @param c OTP verification proof from zk circuit
-   * @param Input public signals containing the Merkle root and time
+   * @param input public signals containing the Merkle root and time
    */
   function verifyOTP(
     uint256[2] memory a,
@@ -64,3 +64,4 @@ contract ZkOtpValidator {
     success = true;
   }
 }
+
