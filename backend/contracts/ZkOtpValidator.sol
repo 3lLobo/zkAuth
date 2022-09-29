@@ -64,3 +64,4 @@ contract ZkOtpValidator {
     success = true;
   }
 }
+

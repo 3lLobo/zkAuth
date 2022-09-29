@@ -25,6 +25,7 @@ export const OptimismGoerli: Chain = {
     decimals: 18,
   },
 }
+
 const config: any = {
   readOnlyChainId: OptimismGoerli.chainId,
   readOnlyUrls: {

@@ -31,6 +31,12 @@ The logic used to recover wa compromised wallet and reassign its owner.
 The logic  to verify the wallet specific 2 factor authentication.
 
 
+## Delpoy on Optimism Görli
+
+First set your private key on a .env file
+
+yarn hardhat deploy --network optimsm-goerli
+
 ## Cyborg Run 🏃‍♂️
 
 How to setup the project, compile the contracts, run the test and deploy.
