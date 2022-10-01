@@ -42,11 +42,8 @@ export async function connectZkWallet(
   provider: ethers.providers.JsonRpcProvider,
   userAddress: string
 ) {
-  //connect to factory to retrive wallet address
+  // connect to factory to retrieve wallet address
   connectFactory(provider)
-  console.log("🚀 ~ file: contracts.ts ~ line 47 ~ provider", provider)
-  console.log("🚀 ~ file: contracts.ts ~ line 61 ~ userAddress", userAddress)
-  console.log("🚀 ~ file: contracts.ts ~ line 50 ~ zkWalletFactory", zkWalletFactory)
   const walletAddress = await zkWalletFactory.userAddressToWalletAddress(
     userAddress
   )

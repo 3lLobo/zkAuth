@@ -77,7 +77,6 @@ const TotpSetup = (props: TotpSetupProps) => {
       return
     }
     if (ceramicData && ceramicData.content && provider && account) {
-      console.log('Read the hashes: ', ceramicData.content.MerkleTree)
       const encryptedHashes = ceramicData.content.MerkleTree
       const totpObject = await generateInput(pin.join(''), encryptedHashes)
       if (totpObject) {
