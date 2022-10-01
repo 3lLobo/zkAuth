@@ -4,11 +4,9 @@ import { Web3File } from 'web3.storage/dist/src/lib/interface'
 const token = process.env.NEXT_PUBLIC_WEB3STORAGE
 
 function getClient(): Web3Storage | null {
-
   if (token) {
     const client = new Web3Storage({ token })
     return client
-
   } else {
     console.error('Web3Storage api token required!')
     return null
@@ -33,18 +31,18 @@ export const ipfsUpload = async (fileToUpload: any) => {
   }
 }
 
-
 // function to fetch from web3Storage over IPFS gateway
-export const ipfsFetch = async (cid: string): Promise<Web3File[] | undefined> => {
-
+export const ipfsFetch = async (
+  cid: string
+): Promise<Web3File[] | undefined> => {
   const client = getClient()
   if (client) {
-    const res = (await client?.get(cid))
+    const res = await client?.get(cid)
     const files = await res?.files()
 
     if (files) {
       for (const file of files) {
-        console.log(`${file.cid} ${file.name} ${file.size}`);
+        console.log(`${file.cid} ${file.name} ${file.size}`)
       }
     }
     return files

@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-require("dotenv").config()
+require('dotenv').config()
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
@@ -8,29 +8,38 @@ const nextConfig = {
   },
   webpack: (config) => {
     config.resolve.fallback = { fs: false }
-    config.resolve.extensions = ['*', '.mjs', '.js', 'jsx', '.ts', '.tsx', '.json']
-    config.module.rules.push(
-      {
-        test: /\.mjs$/,
-        include: /node_modules/,
-        type: 'javascript/auto'
-      })
-
+    config.resolve.extensions = [
+      '*',
+      '.mjs',
+      '.js',
+      'jsx',
+      '.ts',
+      '.tsx',
+      '.json',
+    ]
+    config.module.rules.push({
+      test: /\.mjs$/,
+      include: /node_modules/,
+      type: 'javascript/auto',
+    })
 
     return config
   },
   env: {
-    API_KEY: process.env.API_KEY
+    API_KEY: process.env.API_KEY,
   },
   async headers() {
     return [
       {
-        source: "/:path*",
+        source: '/:path*',
         headers: [
-          { key: "Access-Control-Allow-Origin", value: "*" },
-          { key: "Access-Control-Allow-Methods", value: "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
-        ]
-      }
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
+          },
+        ],
+      },
     ]
   },
 }

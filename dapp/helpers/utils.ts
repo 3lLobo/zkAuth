@@ -65,11 +65,13 @@ export async function generateInput(
 ) {
   // let hashes = localStorage.getItem('OTPhashes')?.split(',').map(BigInt)
   // console.log(hashes)
-  const hashesString = await decryptOrSignMetamask(encryptedHashes, 'eth_decrypt')
+  const hashesString = await decryptOrSignMetamask(
+    encryptedHashes,
+    'eth_decrypt'
+  )
   const hashes = hashesString?.split(',').map(BigInt)
 
   if (hashes) {
-
     let poseidon = await buildPoseidon()
 
     let currentTime = Math.floor((Date.now() - 5000) / 30000) * 30000 // 3lLobo: Gave it a 5sec backwards buffer
