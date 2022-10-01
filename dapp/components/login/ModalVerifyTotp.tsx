@@ -128,11 +128,11 @@ const ModalVerifyTotp = (props: ModalVerifyTotpProps) => {
                       <div className="mt-2">
                         <p className="mb-5 text-md font-normal text-gray-500 dark:text-gray-300">
                           {props.verified === true ? (
-                            <div>
-                              You have succesfully verified your account
-                            </div>
+                            <p>
+                              You have successfully verified your account
+                            </p>
                           ) : (
-                            <div>Wrong code. Please try again.</div>
+                            <p>Wrong code. Please try again.</p>
                           )}
                         </p>
                       </div>
