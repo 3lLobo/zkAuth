@@ -1,3 +1,5 @@
 **/*.lock
 **/package-lock.json
 **/*.log
+
+res/*.mp4

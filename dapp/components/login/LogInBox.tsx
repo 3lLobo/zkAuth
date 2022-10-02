@@ -18,8 +18,6 @@ const LogInBox = () => {
       if (provider && account) {
         try {
           const zkWalletFactory = connectFactory(provider)
-          console.log("🚀 ~ file: LogInBox.tsx ~ line 21 ~ loadInfo ~ zkWalletFactory", zkWalletFactory.userAddressToWalletAddress(account))
-          console.log("🚀 ~ file: LogInBox.tsx ~ line 24 ~ loadInfo ~ account", account)
           const walletAddress =
             await zkWalletFactory.userAddressToWalletAddress(account)
           console.log(walletAddress)

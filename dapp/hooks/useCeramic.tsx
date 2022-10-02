@@ -1,38 +1,69 @@
 import { useViewerConnection, ViewerRecord } from '@self.id/react'
 import { useViewerRecord } from '@self.id/react'
 import { EthereumAuthProvider } from '@self.id/web'
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
-
-async function connectCeramic({ address, connect, setConnecting }: { address: string, connect: any, setConnecting: Dispatch<SetStateAction<boolean>> }) {
+async function connectCeramic({
+  address,
+  connect,
+  setConnecting,
+}: {
+  address: string
+  connect: any
+  setConnecting: Dispatch<SetStateAction<boolean>>
+}) {
   // Assumes there is an injected `window.ethereum` provider
   const provider = await new EthereumAuthProvider(window.ethereum, address)
   setConnecting(() => true)
   connect(provider).then((res: any) => {
-    console.warn("ceramic connecting: ", res)
+    console.warn('ceramic connecting: ', res)
     setConnecting(() => false)
   })
 }
 
 // A hook combining login and fetching data. Gets triggered when a eth address is passed.
 export function useCeramic(address: string | null): {
-  ceramicData: ViewerRecord<any>,
+  ceramicData: { content: any; set: Dispatch<any> }
   ceramicStatus: string
   // setCeramicAddress: Dispatch<SetStateAction<string | null | undefined>>
 } {
   const [connection, connect, disconnect] = useViewerConnection()
   const [connecting, setConnecting] = useState<boolean>(false)
-  const record = useViewerRecord('kjzl6cwe1jw149ljmroydckks0ihhv2qel7wpyrold7qs3bgp765siz8234jqge')
+  const record = useViewerRecord(
+    'kjzl6cwe1jw149ljmroydckks0ihhv2qel7wpyrold7qs3bgp765siz8234jqge'
+  )
 
+  // promt user to connect to ceramic if it's available and not yet connected
   if (connection.status !== 'connected' && address && !connecting) {
     connectCeramic({
       address,
       connect,
-      setConnecting
+      setConnecting,
     })
   }
 
-  return { ceramicData: record, ceramicStatus: connection.status }
+  const [content, setContent] = useState<any>()
+  const [isFetched, setIsFetched] = useState<boolean>(false)
+
+  // sets the local state to the fetched value once it is available
+  useEffect(() => {
+    if (record.content && !isFetched) {
+      setContent(() => record.content)
+      setIsFetched(() => true)
+    }
+  }, [isFetched, record.content])
+
+  // updates the ceramic record with the local state.
+  useEffect(() => {
+    if (isFetched && record.content !== content && record.set) {
+      record.set(content)
+    }
+  }, [content, isFetched])
+
+  return {
+    ceramicData: { content, set: setContent },
+    ceramicStatus: connection.status,
+  }
 }
 
 // Excerpt from the docs. The data is stored in record.content. To write use record.set or record.merge.

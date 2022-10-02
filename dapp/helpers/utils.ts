@@ -45,7 +45,7 @@ export async function prepareMerkleTree(
 
   // TODO: Replace this local storage to IPFS or Ceramic
   const encryptedHashes = await encryptMetamask(hashes.join(','))
-  localStorage.setItem('OTPhashes', hashes.join(','))
+  // localStorage.setItem('OTPhashes', hashes.join(','))
 
   if (encryptedHashes) {
     return [uri, SECRET, root, encryptedHashes]
@@ -63,13 +63,15 @@ export async function generateInput(
   otp: string | number,
   encryptedHashes: string
 ) {
-  let hashes = localStorage.getItem('OTPhashes')?.split(',').map(BigInt)
+  // let hashes = localStorage.getItem('OTPhashes')?.split(',').map(BigInt)
   // console.log(hashes)
-  const hashesString = await decryptOrSignMetamask(encryptedHashes, 'eth_decrypt')
-  // const hashes = hashesString.split(',').map(BigInt) 
+  const hashesString = await decryptOrSignMetamask(
+    encryptedHashes,
+    'eth_decrypt'
+  )
+  const hashes = hashesString?.split(',').map(BigInt)
 
   if (hashes) {
-
     let poseidon = await buildPoseidon()
 
     let currentTime = Math.floor((Date.now() - 5000) / 30000) * 30000 // 3lLobo: Gave it a 5sec backwards buffer

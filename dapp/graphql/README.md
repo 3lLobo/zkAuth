@@ -1,6 +1,7 @@
 # GraphAPI
 
 Steps:
+
 1. File with the query `query.qraphql`
 2. Config file `.graphclientrc.yml` in root
 3. Install `@graphprotocol/client-cli` for dev
@@ -11,7 +12,11 @@ Steps:
 ```ts
 import React, { useEffect } from 'react'
 // we import types and typed-graphql document from the generated code (`..graphclient/`)
-import { ExampleQueryDocument, ExampleQueryQuery, execute } from '../.graphclient'
+import {
+  ExampleQueryDocument,
+  ExampleQueryQuery,
+  execute,
+} from '../.graphclient'
 
 function App() {
   const [data, setData] = React.useState<ExampleQueryQuery>()
@@ -24,7 +29,11 @@ function App() {
   return (
     <div className="App">
       <p>Graph Client Example</p>
-        <textarea value={JSON.stringify(result.data, null, 2)} readOnly rows={25} />
+      <textarea
+        value={JSON.stringify(result.data, null, 2)}
+        readOnly
+        rows={25}
+      />
     </div>
   )
 }

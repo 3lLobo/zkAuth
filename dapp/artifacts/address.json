@@ -1,5 +1,5 @@
 {
-    "HashCheckVerfier": "0xF248E2ba728Dc6f8143bDC37226A2792e7c4bbc7",
-    "OtpMerkleTreeVerifier": "0x5051B73E8E24a740863f61B6ff1FfB23d26e7A87",
-    "ZkWalletFactory": "0x8D1d409C17a24CE271a0AFfa53Bf82b7cF304E7e"
+  "HashCheckVerfier": "0xF248E2ba728Dc6f8143bDC37226A2792e7c4bbc7",
+  "OtpMerkleTreeVerifier": "0x5051B73E8E24a740863f61B6ff1FfB23d26e7A87",
+  "ZkWalletFactory": "0x8D1d409C17a24CE271a0AFfa53Bf82b7cF304E7e"
 }
