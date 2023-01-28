@@ -16,7 +16,7 @@
     "@heroicons/react": "^2.0.10",
     "@self.id/react": "^0.3.3",
     "@self.id/web": "^0.4.3",
-    "@usedapp/core": "^1.1.5",
+    "@usedapp/core": "^1.2.2",
     "@walletconnect/web3-provider": "^1.8.0",
     "circomlibjs": "^0.1.7",
     "crypto-browserify": "^3.12.0",
