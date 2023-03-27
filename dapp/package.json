@@ -23,7 +23,7 @@
     "dotenv": "^16.0.2",
     "eth-sig-util": "^3.0.1",
     "ethers": "^5.7.0",
-    "framer-motion": "^7.3.5",
+    "framer-motion": "^7.10.3",
     "fs": "^0.0.1-security",
     "hi-base32": "^0.5.1",
     "jsotp": "^1.0.4",
