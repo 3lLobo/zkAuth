@@ -53,7 +53,7 @@
     "dotenv": "^16.0.1",
     "hardhat-contract-sizer": "^2.4.0",
     "hardhat-deploy": "^0.10.4",
-    "snarkjs": "^0.4.24",
+    "snarkjs": "^0.6.7",
     "solidity-coverage": "^0.8.2",
     "totp-generator": "^0.0.13",
     "typechain": "^8.1.0",
