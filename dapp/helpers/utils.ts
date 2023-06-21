@@ -2,10 +2,20 @@
 
 import { buildPoseidon } from 'circomlibjs'
 import totp from 'totp-generator'
-import crypto from 'crypto-browserify'
 import base32 from 'hi-base32'
 import { ethers } from 'ethers'
-import { encrypt, EthEncryptedData } from 'eth-sig-util'
+import { encrypt } from 'eth-sig-util'
+import AES from 'crypto-js/aes'
+import CryptoJS from 'crypto-js'
+
+// Magnitude of the Merkle tree
+const TREE_MAG = 16
+// exp 11 equals 17 hours into the future. exp 16 equals 22 days
+const zkAuthHours = 2 ** TREE_MAG * 30 / (60 * 60)
+const zkAuthDays = 2 ** TREE_MAG * 30 / (60 ** 2) / 24
+
+// message which gets encrypted and is used als secret  
+const KEY = 'zkSecret'
 
 /**
  * Prepares Merkle Tree of hashes of [time, OTP(time)] and stores it on storage
@@ -15,40 +25,46 @@ import { encrypt, EthEncryptedData } from 'eth-sig-util'
 export async function prepareMerkleTree(
   address: string
 ): Promise<[string, string, BigInt, string] | undefined> {
-  const SECRET = prepareSecret()
-  const uri = prepareURI(SECRET, address)
+  // Use the same key every time, this way the user doesn't need to reset his auth app
+  const totpSecret = await getEncryptedKey()
 
+  if (!totpSecret) {
+    console.error("Error encrypting the secret!")
+    return
+  }
+  const uri = prepareURI(totpSecret, address)
   const startTime = Math.floor(Date.now() / 30000 - 1) * 30000
   let poseidon = await buildPoseidon()
-  let hashes: BigInt[] = []
+  let hashes: [] = []
   let tokens: Record<number, any> = {}
 
-  for (let i = 0; i < 2 ** 7; i++) {
+  // Generate the hashes (merkle tree leaves)
+  let hash
+  for (let i = 0; i < 2 ** TREE_MAG; i++) {
     let time = startTime + i * 30000
-    let token = totp(SECRET, { timestamp: time })
+    let token = totp(totpSecret, { timestamp: time })
     tokens[time] = token
-    hashes.push(poseidon.F.toObject(poseidon([BigInt(time), BigInt(token)])))
+    hash = poseidon.F.toObject(poseidon([BigInt(time), BigInt(token)]))
+    hashes.push(hash)
   }
 
-  // compute root
-  let k = 0
-
-  for (let i = 2 ** 7; i < 2 ** 8 - 1; i++) {
-    hashes.push(
-      poseidon.F.toObject(poseidon([hashes[k * 2], hashes[k * 2 + 1]]))
-    )
-    k++
+  let root: BigInt
+  // Generate the tree. The last hash is the root
+  for (let i = 0; i < 2 ** TREE_MAG - 1; i++) {
+    root = poseidon.F.toObject(poseidon([hashes[i * 2], hashes[i * 2 + 1]]))
+    hashes.push(root)
   }
-  let root = hashes[2 ** 8 - 2]
-  console.log('Merkle root:', root)
-  // console.table("hashes", hashes)
 
-  // TODO: Replace this local storage to IPFS or Ceramic
-  const encryptedHashes = await encryptMetamask(hashes.join(','))
-  // localStorage.setItem('OTPhashes', hashes.join(','))
+  const encAES = await AES.encrypt(hashes.join(','), totpSecret)
+  const encHashes = encAES.toString()
+  // console.log("🚀 ~ file: utils.ts ~ line 59 ~ encHashes", encHashes)
+  // // test decryption
+  // const dechashes = await AES.decrypt(encHashes, totpSecret)
+  // console.log("🚀 ~ file: utils.ts ~ line 62 ~ dechashes", dechashes.toString(CryptoJS.enc.Utf8).split(',').length)
+  // console.log("🚀 ~ file: utils.ts ~ line 62 ~ dechashes", hashes.length)
 
-  if (encryptedHashes) {
-    return [uri, SECRET, root, encryptedHashes]
+  if (encHashes) {
+    return [uri, totpSecret, root, encHashes]
   }
 }
 
@@ -65,11 +81,11 @@ export async function generateInput(
 ) {
   // let hashes = localStorage.getItem('OTPhashes')?.split(',').map(BigInt)
   // console.log(hashes)
-  const hashesString = await decryptOrSignMetamask(
-    encryptedHashes,
-    'eth_decrypt'
-  )
-  const hashes = hashesString?.split(',').map(BigInt)
+
+  const decryptionKey = await getEncryptedKey()
+  const decAES = await AES.decrypt(encryptedHashes, decryptionKey)
+  const decHashes = decAES.toString(CryptoJS.enc.Utf8)
+  const hashes = decHashes?.split(',').map(BigInt)
 
   if (hashes) {
     let poseidon = await buildPoseidon()
@@ -92,7 +108,7 @@ export async function generateInput(
     let pathElements = []
     let pathIndex = []
 
-    for (var i = 0; i < 7; i++) {
+    for (var i = 0; i < TREE_MAG; i++) {
       if (hashes.indexOf(currentNode) % 2 === 0) {
         pathIndex.push(0)
         let currentIndex = hashes.indexOf(currentNode) + 1
@@ -172,6 +188,40 @@ export async function decryptOrSignMetamask(
   }
 }
 
+/**
+ * It encrypts a key using the encryption public key of the user's Ethereum address
+ * @returns The encrypted key is being returned.
+ */
+
+async function getEncryptedKey(): Promise<string | undefined> {
+  var provider = new ethers.providers.Web3Provider(window.ethereum)
+  var from = await provider.listAccounts()
+
+  if (provider.provider.request) {
+    const encryptionPublicKey = await provider.provider.request({
+      method: 'eth_getEncryptionPublicKey',
+      params: [from[0]],
+    })
+    if (encryptionPublicKey) {
+      const encryptedData = await encrypt(
+        encryptionPublicKey,
+        { data: KEY },
+        'x25519-xsalsa20-poly1305'
+      )
+      const cleanBase32 = base32.encode(encryptedData.ciphertext).replace(/=/g, '')
+      return cleanBase32
+    }
+  }
+}
+
+
+/**
+ * It takes a string of data, gets the encryption public key from the Metamask provider, encrypts the
+ * data with the public key, and returns the encrypted data
+ * @param {string} data - The data you want to encrypt.
+ * @returns The encrypted data is being returned.
+ */
+
 export async function encryptMetamask(
   data: string
 ): Promise<string | undefined> {
@@ -190,6 +240,7 @@ export async function encryptMetamask(
         { data },
         'x25519-xsalsa20-poly1305'
       )
+      console.log("🚀 ~ file: utils.ts ~ line 233 ~ encryptedData", encryptedData)
 
       return JSON.stringify(encryptedData)
     }
