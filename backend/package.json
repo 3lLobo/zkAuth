@@ -43,20 +43,20 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.9.1",
-    "@typechain/ethers-v5": "^10.1.0",
+    "@typechain/ethers-v5": "^10.2.0",
     "chai": "^4.3.6",
     "circom_tester": "^0.0.19",
     "circomlib": "^2.0.5",
     "circomlib-matrix": "^1.0.1",
-    "circomlib-ml": "^1.1.0",
+    "circomlib-ml": "^1.4.4",
     "circomlibjs": "^0.1.7",
     "dotenv": "^16.0.1",
-    "hardhat-contract-sizer": "^2.4.0",
+    "hardhat-contract-sizer": "^2.8.0",
     "hardhat-deploy": "^0.11.25",
-    "snarkjs": "^0.6.7",
+    "snarkjs": "^0.7.0",
     "solidity-coverage": "^0.8.2",
     "totp-generator": "^0.0.13",
     "typechain": "^8.1.0",
-    "web3-utils": "^1.7.0"
+    "web3-utils": "^1.9.0"
   }
 }
