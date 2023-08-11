@@ -1996,10 +1996,10 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@metamask/detect-provider@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@metamask/detect-provider/-/detect-provider-1.2.0.tgz#3667a7531f2a682e3c3a43eaf3a1958bdb42a696"
-  integrity sha512-ocA76vt+8D0thgXZ7LxFPyqw3H7988qblgzddTDA6B8a/yU0uKV42QR/DhA+Jh11rJjxW0jKvwb5htA6krNZDQ==
+"@metamask/detect-provider@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@metamask/detect-provider/-/detect-provider-2.0.0.tgz#4bc2795e5e6f7d8b84b2e845058d2f222c99917d"
+  integrity sha512-sFpN+TX13E9fdBDh9lvQeZdJn4qYoRb/6QF2oZZK/Pn559IhCFacPMU1rMuqyXoFQF3JSJfii2l98B87QDPeCQ==
 
 "@metamask/safe-event-emitter@^2.0.0":
   version "2.0.0"
@@ -2734,12 +2734,12 @@
   resolved "https://registry.yarnpkg.com/@uniswap/token-lists/-/token-lists-1.0.0-beta.30.tgz#2103ca23b8007c59ec71718d34cdc97861c409e5"
   integrity sha512-HwY2VvkQ8lNR6ks5NqQfAtg+4IZqz3KV1T8d2DlI8emIn9uMmaoFbIOg0nzjqAVKKnZSbMTRRtUoAh6mmjRvog==
 
-"@usedapp/core@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@usedapp/core/-/core-1.2.2.tgz#b74d617421a9c91a9e6d6d29ce115b434aadd426"
-  integrity sha512-+YbsFUer5ejQMxwlOJm5/6SAxPdtYMCHaZL1RhKRVPLiliGBGvRKO1ew2eWAkzRtWUnH8fAlBOdukzPVr8tsrg==
+"@usedapp/core@^1.2.10":
+  version "1.2.10"
+  resolved "https://registry.yarnpkg.com/@usedapp/core/-/core-1.2.10.tgz#c6bd45d55af21c3a71454503fb40326c26a26fd1"
+  integrity sha512-5eFgXGgLUCGPMXNqLlPB9XNc/PIv/h+eUh08gAwe+AhQEYre3K5uk39WpVQmBPsGxUKYZygbILhC4eaLgxDQ4A==
   dependencies:
-    "@metamask/detect-provider" "^1.2.0"
+    "@metamask/detect-provider" "^2.0.0"
     "@uniswap/token-lists" "^1.0.0-beta.27"
     fetch-mock "^9.11.0"
     lodash.merge "^4.6.2"
