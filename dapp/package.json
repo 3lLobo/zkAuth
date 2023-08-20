@@ -12,7 +12,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.7",
+    "@headlessui/react": "^1.7.16",
     "@heroicons/react": "^2.0.10",
     "@self.id/react": "^0.3.3",
     "@self.id/web": "^0.4.3",
