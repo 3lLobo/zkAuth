@@ -50,7 +50,7 @@
     "circomlib-matrix": "^1.0.1",
     "circomlib-ml": "^1.4.4",
     "circomlibjs": "^0.1.7",
-    "dotenv": "^16.0.1",
+    "dotenv": "^16.3.1",
     "hardhat-contract-sizer": "^2.8.0",
     "hardhat-deploy": "^0.11.25",
     "snarkjs": "^0.7.0",
