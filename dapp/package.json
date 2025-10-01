@@ -30,7 +30,7 @@
     "next": "12.3.4",
     "next-qrcode": "^2.2.0",
     "next-themes": "^0.2.1",
-    "patch-package": "^6.4.7",
+    "patch-package": "^8.0.1",
     "postinstall-postinstall": "^2.1.0",
     "process": "^0.11.10",
     "react": "18.2.0",
